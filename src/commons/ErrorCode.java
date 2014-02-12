@@ -1,0 +1,40 @@
+package commons;
+
+public class ErrorCode {
+
+    public static final byte SUCCESS_CODE = 0x00;
+    public static final byte BAD_PATH_CODE = 0x01;
+    public static final byte FNF_CODE = 0x02;
+    public static final byte IO_ERROR_CODE = 0x03;
+    public static final byte DELETE_FAIL_CODE = 0x04;
+    public static final byte ATTR_FETCH_FAIL_CODE = 0x05;
+    public static final byte MKDIR_FAIL_CODE = 0x06;
+    public static final byte DIR_ALREADY_EXISTS_CODE = 0x07;
+    public static final byte INVALID_CMD_CODE = 0x08;
+    public static final byte NW_READ_ERROR_CODE = 0x09;
+    public static final byte INVALID_REQ_ERROR_CODE = 0x0a;
+    
+    
+    public static String getErrorMsgFromErrorCode(byte code) {
+        switch(code) {
+        case 0x00:
+            return "Success";
+        case 0x01:
+            return "Bad path - possibly null";
+        case 0x02:
+            return "File Not Found";
+        case 0x03:
+            return "An I/O Error Occurred during the operation";
+        case 0x04:
+            return "Unable to delete file";
+        case 0x05:
+            return "Unable to fetch attributes of the file";
+        case 0x06:
+            return "Unable to create directory";
+        case 0x07:
+            return "The directory already exists";
+        default:
+            return "Unable to understand error code";
+        }
+    }
+}

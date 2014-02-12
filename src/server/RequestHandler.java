@@ -1,0 +1,369 @@
+package server;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+
+import commons.ErrorCode;
+import commons.ResponseHandler;
+
+import utils.PathType;
+
+public class RequestHandler implements Runnable{
+    private Socket socket;
+    private int nonce;
+    
+    RequestHandler(Socket sock, int nonce) {
+        this.socket = sock;
+        this.nonce = nonce;
+    }    
+
+    @Override
+    public void run() {
+        BufferedInputStream bin = null;
+        try {
+            bin = new BufferedInputStream(socket.getInputStream());
+                        
+            //8K is default buffered read size in java.
+            //we are being conservative and taking 0.5M          
+            byte[] contents = new byte[512* 1024]; 
+            
+            int bytes_read = bin.read(contents, 0, contents.length);
+            if (bytes_read == -1) {
+                ResponseHandler.sendResponseCode(socket, 
+                        ErrorCode.NW_READ_ERROR_CODE);
+                return;
+            }
+            
+            Request request = unmarshallStream(contents, bytes_read, nonce, bin);
+            if (request == null) {
+                //XXX: Send error msg!
+                ResponseHandler.sendResponseCode(socket, 
+                        ErrorCode.INVALID_REQ_ERROR_CODE);
+                System.err.println("Bad request!");
+                return;
+            } 
+            
+            //XXX:just call the appropriate method next!
+            request.handle(socket);
+            
+            return;            
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bin.close();
+                socket.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+        }
+                        
+    }
+
+    private Request unmarshallStream(byte[] contents, int resp_size,
+            int nonce, BufferedInputStream bin) {
+        
+        /**
+         * [4byte nonce]|[1byte f/d]|[1byte cmd]|[4byte pathname len]|
+         * [n bytes pathname]|[r/w req arg(s) each 8 bytes]
+         *  [4 byte write buflen for writes]|
+         * [write buf]
+         */
+        
+        int offset = 0;
+        RequestPrefix prefix = parsePrefix(contents, offset, resp_size);        
+        if(prefix == null) {
+            return null;
+        }
+        
+        offset += RequestPrefix.getSize();
+                
+        //parse path!
+        int path_length = prefix.getPathLength();
+        String path = parsePath(contents, offset, resp_size, path_length);
+        if (path == null) {
+            return null;
+        }        
+        offset += path_length;
+        
+        /*Next parse the args if any!*/
+        long[] args = new long[Constants.MAX_NUM_ARGS];
+        boolean success = parseArgs(contents, 
+                offset, resp_size, prefix.isReadReq(),
+                prefix.isWriteReq(), args);
+        
+        //we don't have args to satisfy request!
+        if (!success) {
+            return null;
+        }
+        
+        if (prefix.isReadReq()) {
+            offset += Constants.READ_ARGS_SIZE; //2 longs
+        } else if (prefix.isWriteReq()) {
+            offset += Constants.WRITE_ARGS_SIZE; //1 long
+        }
+        
+        int buflen = 0;
+        if (!(prefix.isWriteReq() || prefix.isAppendReq())) {
+            Request request = new Request(prefix.getPathType(),
+                    prefix.getCmd(), path, buflen, args);
+            return request;
+        }
+        
+        //4 bytes for buflen
+        if (resp_size < (offset + 4)) {
+            return null;
+        }
+
+        try {
+            buflen = getIntFromBytes(contents[offset++],
+                    contents[offset++], contents[offset++],
+                    contents[offset++]);
+        } catch(Exception e) {
+            return null;
+        }
+
+        if(buflen > Constants.MAX_WRITE_BUF_SIZE) {
+            return null;
+        }
+        
+        Request request = new Request(prefix.getPathType(),
+                prefix.getCmd(), path, buflen, args);
+        
+        //Read remaining of contents-buffer!
+        request.writeToBuf(contents, offset, resp_size-offset);
+
+        if(request.getNumBytesRead() != buflen) {
+            //more bytes to read!
+            if (!continueReading(request, contents, bin)) {
+                return null;
+            }           
+        }            
+        
+        //System.out.println("num bytes read = " + request.getNumBytesRead());
+        //System.out.println(new String(request.getWriteBuf()));
+        
+        return request;
+    }
+
+    
+
+   private boolean parseArgs(byte[] contents, int offset, int resp_size,
+            boolean isReadReq, boolean isWriteReq, long[] args) {
+        
+       try {
+           if (isWriteReq) {
+               //8 bytes for long
+               if (resp_size < offset + Constants.WRITE_ARGS_SIZE) {
+                   return false;
+               }
+               long w_offset = getLongFromBytes(contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++]);
+               args[0] = w_offset;
+           } else if (isReadReq) {
+               //16 bytes = 2 longs!
+               if (resp_size < offset + Constants.READ_ARGS_SIZE) {
+                   return false;
+               }
+               long r_offset = getLongFromBytes(contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++]);
+               
+               long r_numBytes = getLongFromBytes(contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++], contents[offset++],
+                       contents[offset++]);
+               
+               args[0] = r_offset;
+               args[1] = r_numBytes;
+           }            
+       } catch (Exception e) {
+           return false;
+       }
+       
+       return true;
+    }
+
+    private String parsePath(byte[] contents, int offset, int resp_size,
+            int path_length) {
+        if (resp_size < (offset + path_length)) {
+            return null;
+        }
+        
+        byte[] b_path = new byte[path_length];
+        System.arraycopy(contents, offset, b_path, 0, path_length);
+        String path = new String(b_path);
+        
+        return path;
+    }
+
+    private RequestPrefix parsePrefix(byte[] contents, int offset,
+            int resp_size) {
+
+       int prefix_size = RequestPrefix.getSize();
+       
+       if (contents == null || resp_size < prefix_size) {
+           return null;
+       }
+       
+       //parse nonce!
+       try {
+           int recvd_nonce = getIntFromBytes(contents[offset++],
+                   contents[offset++], contents[offset++],
+                   contents[offset++]);
+           
+           if (recvd_nonce != nonce) {
+               //We can't ascertain source! Discarding
+               return null;
+           }
+           
+       } catch(Exception e) {
+           return null;
+       }
+               
+       //parse f/d
+       byte type = contents[offset++];
+       PathType pathType;
+       if (type == 0x00) {
+           pathType = PathType.FILE;
+       } else if (type == 0x11) {
+           pathType = PathType.DIRECTORY;
+       } else {
+           //how I miss gotos in java :-( !
+           return null;
+       }
+
+       //parse cmd!
+       byte cmd_type = contents[offset++];
+       String cmd = null;
+
+       if (pathType == PathType.FILE) {
+           switch(cmd_type) {
+               case Constants.FILE_READ_CMD_BYTE:
+                   cmd = Constants.FILE_READ_CMD;
+                   break;
+               case Constants.FILE_WRITE_CMD_BYTE:
+                   cmd = Constants.FILE_WRITE_CMD;
+                   break;
+               case Constants.FILE_APPEND_CMD_BYTE:
+                   cmd = Constants.FILE_APPEND_CMD;
+                   break;
+               case Constants.FILE_STAT_CMD_BYTE:
+                   cmd = Constants.FILE_STAT_CMD;
+                   break;
+               case Constants.FILE_DELETE_CMD_BYTE:
+                   cmd = Constants.FILE_DELETE_CMD;
+                   break;                    
+           }
+       } else if (pathType == PathType.DIRECTORY) {
+           switch(cmd_type) {
+               case Constants.DIR_CREATE_CMD_BYTE:
+                   cmd = Constants.DIR_CREATE_CMD;
+                   break;
+               case Constants.DIR_DELETE_CMD_BYTE:
+                   cmd = Constants.DIR_DELETE_CMD;
+                   break;
+               case Constants.DIR_LIST_CMD_BYTE:
+                   cmd = Constants.DIR_LIST_CMD;
+                   break;
+               case Constants.DIR_LISTLONG_CMD_BYTE:
+                   cmd = Constants.DIR_LISTLONG_CMD;
+                   break;
+           }
+       }
+       if (cmd == null) {
+           return null;
+       }
+       
+       //parse length of path
+       int path_length = 0;
+       try {
+           path_length = getIntFromBytes(contents[offset++],
+                   contents[offset++], contents[offset++],
+                   contents[offset++]);
+           
+       } catch(Exception e) {
+           return null;
+       }
+       if (resp_size < (offset + path_length)) {
+           return null;
+       } 
+       
+       return new RequestPrefix(nonce, pathType, cmd, path_length);
+    }
+
+    private boolean continueReading(Request request, byte[] contents,
+            BufferedInputStream bin) {
+        
+        int numBytesRead;
+        int totalReadSize;
+        
+        while (true) {
+            try {
+                //num of bytes read so far
+                numBytesRead = request.getNumBytesRead();
+                
+                //total num of bytes we need to read
+                totalReadSize = request.getWriteBufSize();
+                
+                if(numBytesRead >= totalReadSize) {
+                    //it should actually be only ==
+                    break;
+                }
+                
+                int bytes_read = bin.read(contents, 0, contents.length);
+                
+                if (bytes_read == -1) {
+                    //client has lied about size - but since it's
+                    // less than what we can hold - so we 'll satisfy request!
+                    return true;
+                }
+                
+                if ((bytes_read + numBytesRead) > totalReadSize) {
+                    //client sending more bytes than we can hold
+                    // we aren't going to handle request
+                    return false;
+                }
+                
+                request.writeToBuf(contents, 0, bytes_read);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+                return false;
+            }
+        }
+        
+        return true;
+        
+    }
+
+    private long getLongFromBytes(byte b1, byte b2, byte b3,
+            byte b4, byte b5,
+            byte b6, byte b7, byte b8) throws Exception {
+
+        ByteBuffer bb = ByteBuffer.wrap(new byte[] {b1, b2, b3, b4, b5, b6, b7, b8});
+        long retVal = bb.getLong();
+        
+        return retVal;
+    }
+
+    private int getIntFromBytes(byte b1, byte b2, byte b3, byte b4) 
+            throws Exception{
+
+        //Data is coming in NBO which is BigEndian!
+
+        ByteBuffer bb = ByteBuffer.wrap(new byte[] {b1, b2, b3, b4});
+        int retVal = bb.getInt();
+        
+        return retVal;        
+    }
+}
