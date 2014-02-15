@@ -3,12 +3,12 @@ package server;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.ByteBuffer;
+
+import utils.Conversions;
+import utils.PathType;
 
 import commons.ErrorCode;
 import commons.ResponseHandler;
-
-import utils.PathType;
 
 public class RequestHandler implements Runnable{
     private Socket socket;
@@ -120,7 +120,7 @@ public class RequestHandler implements Runnable{
         }
 
         try {
-            buflen = getIntFromBytes(contents[offset++],
+            buflen = Conversions.getIntFromBytes(contents[offset++],
                     contents[offset++], contents[offset++],
                     contents[offset++]);
         } catch(Exception e) {
@@ -161,7 +161,8 @@ public class RequestHandler implements Runnable{
                if (resp_size < offset + Constants.WRITE_ARGS_SIZE) {
                    return false;
                }
-               long w_offset = getLongFromBytes(contents[offset++],
+               long w_offset = Conversions.getLongFromBytes(
+                       contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++], contents[offset++],
@@ -172,13 +173,15 @@ public class RequestHandler implements Runnable{
                if (resp_size < offset + Constants.READ_ARGS_SIZE) {
                    return false;
                }
-               long r_offset = getLongFromBytes(contents[offset++],
+               long r_offset = Conversions.getLongFromBytes(
+                       contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++]);
                
-               long r_numBytes = getLongFromBytes(contents[offset++],
+               long r_numBytes = Conversions.getLongFromBytes(
+                       contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++], contents[offset++],
                        contents[offset++], contents[offset++],
@@ -218,7 +221,8 @@ public class RequestHandler implements Runnable{
        
        //parse nonce!
        try {
-           int recvd_nonce = getIntFromBytes(contents[offset++],
+           int recvd_nonce = Conversions.getIntFromBytes(
+                   contents[offset++],
                    contents[offset++], contents[offset++],
                    contents[offset++]);
            
@@ -288,7 +292,8 @@ public class RequestHandler implements Runnable{
        //parse length of path
        int path_length = 0;
        try {
-           path_length = getIntFromBytes(contents[offset++],
+           path_length = Conversions.getIntFromBytes(
+                   contents[offset++],
                    contents[offset++], contents[offset++],
                    contents[offset++]);
            
@@ -346,24 +351,4 @@ public class RequestHandler implements Runnable{
         
     }
 
-    private long getLongFromBytes(byte b1, byte b2, byte b3,
-            byte b4, byte b5,
-            byte b6, byte b7, byte b8) throws Exception {
-
-        ByteBuffer bb = ByteBuffer.wrap(new byte[] {b1, b2, b3, b4, b5, b6, b7, b8});
-        long retVal = bb.getLong();
-        
-        return retVal;
-    }
-
-    private int getIntFromBytes(byte b1, byte b2, byte b3, byte b4) 
-            throws Exception{
-
-        //Data is coming in NBO which is BigEndian!
-
-        ByteBuffer bb = ByteBuffer.wrap(new byte[] {b1, b2, b3, b4});
-        int retVal = bb.getInt();
-        
-        return retVal;        
-    }
 }

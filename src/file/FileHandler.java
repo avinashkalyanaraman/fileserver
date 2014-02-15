@@ -201,13 +201,12 @@ public class FileHandler {
                 return ErrorCode.IO_ERROR_CODE;
             }
         }
-                
+
+        String s = new String(b);
+        System.out.println(s);
+        
         //send the b bytes out!
         ResponseHandler.sendReadResponse(socket, b);
         return ErrorCode.SUCCESS_CODE;
-        
-//        String s = new String(b);
-//        System.out.println(s);
-//        return 0;
     }
 }

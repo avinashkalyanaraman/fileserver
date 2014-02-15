@@ -33,6 +33,12 @@ public class ErrorCode {
             return "Unable to create directory";
         case 0x07:
             return "The directory already exists";
+        case 0x08:
+            return "Invalid cmd";
+        case 0x09:
+            return "Network request read error by server";
+        case 0x0a:
+            return "Bad request";
         default:
             return "Unable to understand error code";
         }

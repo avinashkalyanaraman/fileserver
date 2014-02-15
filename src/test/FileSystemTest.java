@@ -1,6 +1,5 @@
 package test;
 
-import dir.DirHandler;
 import file.FileHandler;
 
 public class FileSystemTest {

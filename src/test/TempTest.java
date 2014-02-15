@@ -1,16 +1,16 @@
 package test;
 
+import java.net.Socket;
+
 public class TempTest {
 
-    public static void main(String args[]) {
-        int[] a= {2,3,4};
-        change_a(a);
-        System.out.println(a[0] +"," + a[1] + "," + a[2]);
-    }
-    
-    static void change_a(int[] a) {
-        for(int ii=0; ii<a.length; ii++) {
-            a[ii]++;
+    public static void main(String args[]) throws Exception {
+        try {
+            Socket sock = new Socket("localhosty", 7979);           
+        } finally {
+            String s = "aaa";
+            System.out.println(s);
         }
     }
+    
 }
