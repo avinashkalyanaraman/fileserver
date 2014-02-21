@@ -12,11 +12,11 @@ import commons.ResponseHandler;
 
 public class RequestHandler implements Runnable{
     private Socket socket;
-    private int nonce;
+    private byte[] nonce = new byte[Constants.NONCE_SIZE];
     
-    RequestHandler(Socket sock, int nonce) {
+    RequestHandler(Socket sock, byte[] nonce) {
         this.socket = sock;
-        this.nonce = nonce;
+        System.arraycopy(nonce, 0, this.nonce, 0, nonce.length);
     }    
 
     @Override
@@ -36,7 +36,7 @@ public class RequestHandler implements Runnable{
                 return;
             }
             
-            Request request = unmarshallStream(contents, bytes_read, nonce, bin);
+            Request request = unmarshallStream(contents, bytes_read, bin);
             if (request == null) {
                 //XXX: Send error msg!
                 ResponseHandler.sendResponseCode(socket, 
@@ -65,7 +65,7 @@ public class RequestHandler implements Runnable{
     }
 
     private Request unmarshallStream(byte[] contents, int resp_size,
-            int nonce, BufferedInputStream bin) {
+            BufferedInputStream bin) {
         
         /**
          * [4byte nonce]|[1byte f/d]|[1byte cmd]|[4byte pathname len]|
@@ -221,15 +221,18 @@ public class RequestHandler implements Runnable{
        
        //parse nonce!
        try {
-           int recvd_nonce = Conversions.getIntFromBytes(
-                   contents[offset++],
-                   contents[offset++], contents[offset++],
-                   contents[offset++]);
            
-           if (recvd_nonce != nonce) {
-               //We can't ascertain source! Discarding
+           byte[] recvd_nonce = new byte[Constants.NONCE_SIZE];
+            
+           System.arraycopy(contents, offset, recvd_nonce,
+                   0, recvd_nonce.length);
+           
+           if (!isEqual(recvd_nonce, nonce)) {
+               //We can't ascertain src discarding!
                return null;
            }
+           
+           offset += Constants.NONCE_SIZE;
            
        } catch(Exception e) {
            return null;
@@ -305,6 +308,31 @@ public class RequestHandler implements Runnable{
        } 
        
        return new RequestPrefix(nonce, pathType, cmd, path_length);
+    }
+
+    private boolean isEqual(byte[] recvd_nonce, byte[] nonce) {
+        
+        if (recvd_nonce == null && nonce == null) {
+            return true;
+        }
+        
+        if (recvd_nonce == null || nonce == null) {
+            return false;
+        }
+        
+        if (recvd_nonce.length != nonce.length) {
+            return false;
+        }
+        
+        int len = recvd_nonce.length;
+        
+        for (int lcv=0; lcv<len; lcv++) {
+            if (recvd_nonce[lcv] != nonce[lcv]) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     private boolean continueReading(Request request, byte[] contents,

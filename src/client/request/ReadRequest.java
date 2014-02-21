@@ -1,5 +1,6 @@
 package client.request;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -7,11 +8,12 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import server.Constants;
+import utils.Conversions;
 
 public class ReadRequest extends DefaultRequest{
 
     public static void send(Socket clientSocket, String path, long offset,
-            long numBytes, int nonce) throws UnknownHostException, IOException{
+            long numBytes, byte[] nonce) throws UnknownHostException, IOException{
 
         BufferedOutputStream bos = null;
 
@@ -46,4 +48,66 @@ public class ReadRequest extends DefaultRequest{
 
     }
 
+    public static ReadResponse recv(Socket clientSocket,
+            int resp_size) throws IOException{
+    
+        BufferedInputStream bis = null;
+
+        bis = new BufferedInputStream(
+                clientSocket.getInputStream());
+        
+        //status code + sizeof(read buffer)
+        byte[] response_pfix = new byte[5];
+        int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
+        if (bytes_read != response_pfix.length) {
+            //Our error!
+            return new ReadResponse(-1, null);
+        }
+        
+        int retVal = Conversions.getIntFromBytes(response_pfix[0], 
+                (byte)0x00, (byte)0x00, (byte)0x00);
+        
+        if (retVal != 0) {
+            return new ReadResponse(retVal, null);
+        }
+        
+        //success response!
+        int read_buf_size = Conversions.getIntFromBytes(response_pfix[1], 
+                response_pfix[2], response_pfix[3], response_pfix[4]);
+        
+        if (read_buf_size > resp_size) {
+            //err! we have a smaller buff to recv
+            // than what the server is sending
+            return new ReadResponse(-1, null);
+        }
+
+        byte[] contents = new byte[512* 1024];
+        byte[] read_buff = new byte[read_buf_size];
+        
+        int readOffset = 0;
+        while(true) {
+            if (readOffset == read_buf_size) {
+                return new ReadResponse(0, read_buff);
+            }
+            
+            bytes_read = bis.read(contents, 0, contents.length);
+            if (bytes_read == -1) {
+                //XXX: Server could 've sent a smaller response!
+                return new ReadResponse(0, read_buff);
+            }
+            
+            //Server sending response larger than it should -
+            // shouldn't happen actually!
+            if (readOffset + bytes_read > read_buf_size) {
+                return new ReadResponse(-1, null);
+            }
+            
+            System.arraycopy(contents, 0, read_buff, 
+                    readOffset, bytes_read);            
+            readOffset += bytes_read;
+
+        }
+                
+        
+    }
 }

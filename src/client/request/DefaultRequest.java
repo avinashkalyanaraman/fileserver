@@ -12,7 +12,7 @@ public class DefaultRequest {
 
     public static void send(
             Socket clientSocket, byte pathtype, byte cmd, String path, 
-            int nonce) throws UnknownHostException, IOException{
+            byte[] nonce) throws UnknownHostException, IOException{
         
         BufferedOutputStream bos = null;
         

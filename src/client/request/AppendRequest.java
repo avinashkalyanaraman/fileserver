@@ -11,7 +11,7 @@ import server.Constants;
 public class AppendRequest extends DefaultRequest{
 
     public static void send(Socket clientSocket, String path, byte[] wb,
-            int nonce) throws UnknownHostException, IOException {
+            byte[] nonce) throws UnknownHostException, IOException {
         
         BufferedOutputStream bos = new BufferedOutputStream(
                 clientSocket.getOutputStream());

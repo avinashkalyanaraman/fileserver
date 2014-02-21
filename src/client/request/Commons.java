@@ -6,17 +6,16 @@ public class Commons {
 
     //Returns the number of bytes written to request
     public static int formPrefix(byte[] request, byte pathtype,
-            byte cmd, String path, int nonce) {
+            byte cmd, String path, byte[] nonce) {
 
-        int w_offset = 0;
+        int w_offset = 0;                
 
         //nonce!
-        ByteBuffer bb_nonce = ByteBuffer.allocate(4);
-        bb_nonce.putInt(nonce);
-        byte[] b_nonce = bb_nonce.array();        
-        System.arraycopy(b_nonce, 0, request, w_offset, b_nonce.length);
-        w_offset += b_nonce.length;
-
+        if (nonce != null) {
+            System.arraycopy(nonce, 0, request, w_offset, nonce.length);
+            w_offset += nonce.length;
+        }
+        
         //f/d
         request[w_offset++] = pathtype;
         //cmd

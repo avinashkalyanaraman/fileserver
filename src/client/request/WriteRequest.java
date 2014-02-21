@@ -11,7 +11,7 @@ import server.Constants;
 public class WriteRequest extends DefaultRequest{
 
     public static void send(Socket clientSocket, String path, byte[] wb,
-            long offset, int nonce) 
+            long offset, byte[] nonce) 
             throws UnknownHostException, IOException {
         
         BufferedOutputStream bos = null;

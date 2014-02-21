@@ -2,7 +2,6 @@ package server;
 
 public class Constants {
     public static final int MAX_NUM_ARGS = 2;
-    public static int port = 7979;
     public static int MAX_WRITE_BUF_SIZE = 50 * 1024 * 1024; //50MB!
     
     public static String FILE_READ_CMD = "r";
@@ -30,8 +29,10 @@ public class Constants {
     
     public static final byte FILE_OPN_BYTE = 0x00;
     public static final byte DIR_OPN_BYTE = 0x11;
+    public static final int NONCE_SIZE = 16;
         
     
     public static int READ_ARGS_SIZE = 16; //2 LONGS
     public static int WRITE_ARGS_SIZE = 8; //1 LONG
+    
 }

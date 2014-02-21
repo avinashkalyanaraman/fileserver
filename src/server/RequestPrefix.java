@@ -8,12 +8,12 @@ public class RequestPrefix {
     //IMPORTANT :if any field is added or type is modified! Modify getSize()!
     //----------------------------------------------------
     
-    private int _nonce;
+    private byte[] _nonce = new byte[Constants.NONCE_SIZE];
     private PathType _pathType;
     private String _cmd;
     private int _pathNamelen;
     
-    public RequestPrefix(int nonce, PathType pathType, String cmd,
+    public RequestPrefix(byte[] nonce, PathType pathType, String cmd,
             int pathNamelen) {
         this._nonce = nonce;
         this._pathType = pathType;
@@ -22,17 +22,17 @@ public class RequestPrefix {
     }
     
     public static int getSize() {
-        //4+1+1+4
+        //16+1+1+4
         //sizeof(nonce) + sizeof(pathType) 
         // + sizeof(cmd) +sizeof(pathNameLen)
-        return 10;
+        return Constants.NONCE_SIZE + 6;
     }
     
     public int getPathLength() {
         return _pathNamelen;
     }
 
-    public int getNonce() {
+    public byte[] getNonce() {
         return _nonce;
     }
 
