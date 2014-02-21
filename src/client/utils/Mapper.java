@@ -3,30 +3,29 @@ package client.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import client.FileServerID;
+
 public class Mapper {
 
-    static private Map<String, Integer> _unameToPortMapping =
-            new HashMap<String,Integer>();
+    static private Map<String, FileServerID> _unameToPortMapping =
+            new HashMap<String,FileServerID>();
     
-    static public int getClientPort(String uname) {
+    static public FileServerID getClientMapping(String uname) {
         if (uname == null) {
-            return -1;
+            return null;
         }
         
-        Integer port = _unameToPortMapping.get(uname);
-        if (port == null) {
-            return -1;
-        }
-        
+        FileServerID port = _unameToPortMapping.get(uname);
         return port;
     }
     
-    static public void setClientPort(String uname, int port) {
-        if (uname == null || port < 0) {
+    static public void setClientMapping(String uname, 
+            FileServerID id) {
+        if (uname == null || id == null) {
             return;
         }
         
-        _unameToPortMapping.put(uname, port);
+        _unameToPortMapping.put(uname, id);
     }
         
 }

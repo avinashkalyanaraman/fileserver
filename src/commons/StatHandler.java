@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import utils.PathType;
+
 public class StatHandler {
 
     public static int stat(String path, Socket socket) {
@@ -36,22 +38,27 @@ public class StatHandler {
             return ErrorCode.ATTR_FETCH_FAIL_CODE;
         }
         
-        System.out.println("name             = " + file.getFileName());
-        System.out.println("creationTime     = " + attr.creationTime());
-        System.out.println("lastAccessTime   = " + attr.lastAccessTime());
-        System.out.println("lastModifiedTime = " + attr.lastModifiedTime());
-        System.out.println("size             = " + attr.size());
-        
+        PathType type;
         if (attr.isRegularFile()) {
-            System.out.println("File");
+            type = PathType.FILE;
         } else if(attr.isDirectory()) {
-            System.out.println("Dir");
+            type = PathType.DIRECTORY;
         } else if (attr.isSymbolicLink()) {
-            System.out.println("SymLink");
+            type = PathType.LINK;
         } else {
-            System.out.println("Other");
+            type = PathType.OTHER;
         }
         
+        StatResponse sr = new StatResponse(file.getFileName().toString(),
+                attr.lastAccessTime(), attr.lastModifiedTime(),
+                attr.size(), type);
+        
+        byte[] response = sr.serialize();
+        if (response == null) {
+            response = new byte[0];
+        }
+        
+        ResponseHandler.sendStatResponse(socket, response);
         
         return ErrorCode.SUCCESS_CODE;
     }

@@ -83,7 +83,7 @@ public class Request {
         
         if (_type == PathType.FILE) {
             handleFileOp(socket);
-        } else {
+        } else if (_type == PathType.DIRECTORY){
             handleDirOp(socket);
         }
     }
@@ -122,8 +122,6 @@ public class Request {
             DirHandler.mkdir(_path, socket);
         } else if (_cmd.equalsIgnoreCase(Constants.DIR_DELETE_CMD)) {
             DirHandler.remove(_path, socket);
-        } else if (_cmd.equalsIgnoreCase(Constants.DIR_LIST_CMD)) {
-            DirHandler.list(_path, socket);
         } else if (_cmd.equalsIgnoreCase(Constants.DIR_LISTLONG_CMD)) {
             DirHandler.listlong(_path, socket);
         } else {

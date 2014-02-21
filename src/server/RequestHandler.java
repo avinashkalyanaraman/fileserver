@@ -68,7 +68,7 @@ public class RequestHandler implements Runnable{
             BufferedInputStream bin) {
         
         /**
-         * [4byte nonce]|[1byte f/d]|[1byte cmd]|[4byte pathname len]|
+         * [16byte nonce]|[1byte f/d]|[1byte cmd]|[4byte pathname len]|
          * [n bytes pathname]|[r/w req arg(s) each 8 bytes]
          *  [4 byte write buflen for writes]|
          * [write buf]
@@ -279,9 +279,6 @@ public class RequestHandler implements Runnable{
                    break;
                case Constants.DIR_DELETE_CMD_BYTE:
                    cmd = Constants.DIR_DELETE_CMD;
-                   break;
-               case Constants.DIR_LIST_CMD_BYTE:
-                   cmd = Constants.DIR_LIST_CMD;
                    break;
                case Constants.DIR_LISTLONG_CMD_BYTE:
                    cmd = Constants.DIR_LISTLONG_CMD;

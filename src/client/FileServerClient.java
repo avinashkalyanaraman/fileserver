@@ -114,7 +114,7 @@ public class FileServerClient {
         
         try {
             DefaultRequest.send(clientSocket,
-                    Constants.FILE_OPN_BYTE, Constants.FILE_DELETE_CMD_BYTE,
+                    Constants.FILE_OPN_BYTE, Constants.FILE_STAT_CMD_BYTE,
                     path, nonce);
         } catch(Exception e) {
             clientSocket.close();
@@ -264,9 +264,9 @@ public class FileServerClient {
     public static synchronized FileServerID start(String uname) {
         
         //To Handle race!
-        int port = Mapper.getClientPort(uname);
-        if (port != -1) {
-            return null;
+        FileServerID fsid = Mapper.getClientMapping(uname);
+        if (fsid != null) {
+            return fsid;
         }
         
         List<String> cmd = new ArrayList<String>();
@@ -304,6 +304,7 @@ public class FileServerClient {
             return null;
         }                
         
+        int port = 0;
         try {
             String line = stdout.readLine();
             port = Integer.parseInt(line);
@@ -317,7 +318,8 @@ public class FileServerClient {
             return null;
         }
         
-        FileServerID fsid = new FileServerID(nonce, port);
+        fsid = new FileServerID(nonce, port);
+        Mapper.setClientMapping(uname, fsid);
         return fsid;
     }
 }

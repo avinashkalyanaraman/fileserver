@@ -12,8 +12,7 @@ public class Constants {
     
     public static String DIR_CREATE_CMD = "c";
     public static String DIR_DELETE_CMD = "d";
-    public static String DIR_LIST_CMD = "l";
-    public static String DIR_LISTLONG_CMD = "ll";
+    public static String DIR_LISTLONG_CMD = "l";
     
     
     public final static byte FILE_READ_CMD_BYTE = 0x00;
@@ -24,8 +23,7 @@ public class Constants {
     
     public final static byte DIR_CREATE_CMD_BYTE = 0x00;
     public final static byte DIR_DELETE_CMD_BYTE = 0x01;
-    public final static byte DIR_LIST_CMD_BYTE = 0x02;
-    public final static byte DIR_LISTLONG_CMD_BYTE = 0x04;
+    public final static byte DIR_LISTLONG_CMD_BYTE = 0x02;
     
     public static final byte FILE_OPN_BYTE = 0x00;
     public static final byte DIR_OPN_BYTE = 0x11;
