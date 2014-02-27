@@ -107,6 +107,30 @@ public class StatResponse implements Serializable{
         }
 
     }
+    
+    public String toString() {
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(_fileName);
+        sb.append(",");
+        sb.append(_lastAccessTime);
+        sb.append(",");
+        sb.append(_lastModifiedTime);
+        sb.append(",");
+        sb.append(_size);
+        sb.append(",");
+        if (_type == PathType.FILE) {
+            sb.append("f");
+        } else if (_type == PathType.DIRECTORY) {
+            sb.append("d");
+        } else if (_type == PathType.LINK){
+            sb.append("l");
+        } else {
+            sb.append("o");
+        }
+
+        return sb.toString();
+    }
 
     
 }

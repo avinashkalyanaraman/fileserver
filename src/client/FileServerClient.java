@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.lang.ProcessBuilder.Redirect;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,13 +16,15 @@ import server.Constants;
 import client.request.AppendRequest;
 import client.request.DefaultRequest;
 import client.request.ReadRequest;
+import client.request.ReadResponse;
+import client.request.StatRequest;
+import client.request.StatResponse;
 import client.request.WriteRequest;
 import client.utils.Mapper;
 
 public class FileServerClient {
 
-    //XXX:Worry about return type!
-    public static byte[] read(String path, long offset, 
+    public static ReadResponse read(String path, long offset, 
             long numBytes, byte[] nonce, int port) throws UnknownHostException, IOException{
 
         if (path == null) {
@@ -41,8 +42,15 @@ public class FileServerClient {
         }
 
         //return read response
+        ReadResponse rr = null;
+        try {
+            rr = ReadRequest.recv(clientSocket, (int)numBytes);
+        } catch (Exception e) {
+            clientSocket.close();
+            throw e;
+        }
         
-        return null;
+        return rr;
     }
 
 
@@ -103,8 +111,7 @@ public class FileServerClient {
         return retVal;
     }
 
-    //XXX:Worry about return type!
-    public static int stat(String path, byte[] nonce, int port) 
+    public static StatResponse stat(String path, byte[] nonce, int port) 
             throws UnknownHostException, IOException {
         if (path == null) {
             throw new NullPointerException("delete path cannot be null");
@@ -112,8 +119,9 @@ public class FileServerClient {
         
         Socket clientSocket = new Socket("localhost", port);
         
+        StatResponse sr = null;
         try {
-            DefaultRequest.send(clientSocket,
+            StatRequest.send(clientSocket,
                     Constants.FILE_OPN_BYTE, Constants.FILE_STAT_CMD_BYTE,
                     path, nonce);
         } catch(Exception e) {
@@ -122,8 +130,14 @@ public class FileServerClient {
         }
         
         
-        //read response
-        return 0;
+        try {
+            sr = StatRequest.recv(clientSocket);
+        } catch (Exception e) {
+            clientSocket.close();
+            throw e;
+        }
+        
+        return sr;
     }
 
     public static int rm(String path, byte[] nonce, int port) 
@@ -265,6 +279,8 @@ public class FileServerClient {
         
         //To Handle race!
         FileServerID fsid = Mapper.getClientMapping(uname);
+        
+        //Has someone else already created a mapping?
         if (fsid != null) {
             return fsid;
         }
@@ -281,9 +297,7 @@ public class FileServerClient {
         
         try {
             pb.redirectOutput(Redirect.PIPE);
-            
             p = pb.start();
-            //p = Runtime.getRuntime().exec(cmd);
         } catch (Exception e) {
             return null;
         }

@@ -1,5 +1,7 @@
 package test;
 
+import client.request.StatResponse;
+
 import client.FileServerClient;
 
 public class FileStatTest {
@@ -12,8 +14,7 @@ public class FileStatTest {
         System.out.println(nonce.length);
         
         String file = "/Users/avinash/test";
-        int retVal = FileServerClient.stat(file, nonce, port);
-        System.out.println(retVal);
+        StatResponse sr = FileServerClient.stat(file, nonce, port);
     }
 
 }

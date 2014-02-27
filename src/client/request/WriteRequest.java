@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 import server.Constants;
 
-public class WriteRequest extends DefaultRequest{
+public class WriteRequest{
 
     public static void send(Socket clientSocket, String path, byte[] wb,
             long offset, byte[] nonce) 
@@ -50,4 +50,9 @@ public class WriteRequest extends DefaultRequest{
         
     }
 
+    
+    public static int recv(Socket clientSocket) throws IOException{
+        return DefaultRequest.recv(clientSocket);
+    }
+    
 }

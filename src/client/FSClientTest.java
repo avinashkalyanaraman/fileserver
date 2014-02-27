@@ -1,5 +1,8 @@
 package client;
 
+import client.request.ReadResponse;
+import client.request.StatResponse;
+
 
 public class FSClientTest {
 
@@ -23,7 +26,12 @@ public class FSClientTest {
         FileServerClient.append(filepath, append_text.getBytes(), 
                 nonce, port);
         
-        FileServerClient.read(filepath, 0, 200, nonce, port);
+        ReadResponse rr =FileServerClient.read(filepath, 0, 200, nonce, port);
+        String contents = new String(rr.getReadBuf());
+        System.out.println(contents);
+        
+        StatResponse sr = FileServerClient.stat(filepath, nonce, port);
+        System.out.println(sr);
         
         FileServerClient.rm(filepath, nonce, port);
         FileServerClient.rmdir(dir2, nonce, port);

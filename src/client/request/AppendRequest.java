@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 
 import server.Constants;
 
-public class AppendRequest extends DefaultRequest{
+public class AppendRequest{
 
     public static void send(Socket clientSocket, String path, byte[] wb,
             byte[] nonce) throws UnknownHostException, IOException {
@@ -40,4 +40,7 @@ public class AppendRequest extends DefaultRequest{
         bos.flush();
     }
     
+    public static int recv(Socket clientSocket) throws IOException{
+        return DefaultRequest.recv(clientSocket);
+    }
 }
