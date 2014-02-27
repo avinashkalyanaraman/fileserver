@@ -50,7 +50,7 @@ public class StatRequest{
             
             //I 've read how much I am supposed to read
             if (readOffset == read_buf_size) {
-                commons.StatResponse sr = commons.StatResponse.deserialize(
+                commons.StatAttributes sr = commons.StatAttributes.deserialize(
                         read_buff);
                 return new StatResponse(0, sr);
             }

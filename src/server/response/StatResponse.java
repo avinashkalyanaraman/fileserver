@@ -6,14 +6,20 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 
 import commons.ErrorCode;
+import commons.StatAttributes;
 
 public class StatResponse {
 
-    public static void send(Socket socket, byte[] b) {
-        if (socket == null || b == null) {
+    public static void send(Socket socket, StatAttributes sa) {
+        if (socket == null || sa == null) {
             return;
         }
 
+        byte[] b = sa.serialize();
+        if (b == null) {
+            b = new byte[0];
+        }
+        
         try {
             BufferedOutputStream bos = new BufferedOutputStream(
                     socket.getOutputStream());

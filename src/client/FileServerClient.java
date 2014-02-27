@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import utils.Constants;
+import commons.Constants;
+
 import client.mapping.Mapper;
 import client.request.AppendRequest;
 import client.request.DefaultRequest;

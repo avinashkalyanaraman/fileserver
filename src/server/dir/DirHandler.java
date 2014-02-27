@@ -3,9 +3,9 @@ package server.dir;
 import java.io.File;
 import java.net.Socket;
 
+import server.file.FileHandler;
 import server.response.DefaultResponse;
 import commons.ErrorCode;
-import commons.StatHandler;
 
 public class DirHandler {
 
@@ -80,7 +80,7 @@ public class DirHandler {
         File[] files = dir.listFiles();
         
         for(File file: files) {
-           StatHandler.stat(file.getAbsolutePath(),
+           FileHandler.stat(file.getAbsolutePath(),
                    socket); 
         }
         

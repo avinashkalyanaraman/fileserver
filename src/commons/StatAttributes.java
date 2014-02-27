@@ -12,7 +12,7 @@ import java.nio.file.attribute.FileTime;
 
 import utils.PathType;
 
-public class StatResponse implements Serializable{
+public class StatAttributes implements Serializable{
 
     private String _fileName;
     private long _lastAccessTime; //in ms since epoch
@@ -22,7 +22,7 @@ public class StatResponse implements Serializable{
     
     private static final long serialVersionUID = 1L;
 
-    public StatResponse(String fileName, FileTime lastAccessTime,
+    public StatAttributes(String fileName, FileTime lastAccessTime,
             FileTime lastModifiedTime, long size, PathType type) {
         _fileName = fileName;
         _lastAccessTime = lastAccessTime.toMillis();
@@ -78,7 +78,7 @@ public class StatResponse implements Serializable{
         }
     }
 
-    public static StatResponse deserialize(byte[] response) {
+    public static StatAttributes deserialize(byte[] response) {
         if (response == null) {
             return null;
         }
@@ -87,7 +87,7 @@ public class StatResponse implements Serializable{
         ObjectInput in = null;
         try {
             in = new ObjectInputStream(bis);
-            StatResponse obj = (StatResponse)in.readObject();
+            StatAttributes obj = (StatAttributes)in.readObject();
             return obj;
         } catch (ClassNotFoundException e) {
             return null;

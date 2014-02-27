@@ -177,17 +177,13 @@ public class FileHandler {
             type = PathType.OTHER;
         }
         
-        commons.StatResponse sr = new commons.StatResponse(
+        commons.StatAttributes attributes = new commons.StatAttributes(
                 file.getFileName().toString(),
                 attr.lastAccessTime(), attr.lastModifiedTime(),
                 attr.size(), type);
         
-        byte[] response = sr.serialize();
-        if (response == null) {
-            response = new byte[0];
-        }
         
-        StatResponse.send(socket, response);
+        StatResponse.send(socket, attributes);
         
         return ErrorCode.SUCCESS_CODE;
     

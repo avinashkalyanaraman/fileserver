@@ -7,7 +7,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-import utils.Constants;
+import commons.Constants;
+
 import utils.Conversions;
 
 public class ReadRequest extends DefaultRequest{

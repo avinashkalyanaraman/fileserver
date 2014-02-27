@@ -3,9 +3,9 @@ package client.request;
 public class StatResponse {
 
     private int _errorCode;
-    private commons.StatResponse _sr;
+    private commons.StatAttributes _sr;
     
-    public StatResponse(int errorCode, commons.StatResponse sr) {
+    public StatResponse(int errorCode, commons.StatAttributes sr) {
         _sr = sr;
         _errorCode = errorCode;
     }
@@ -14,7 +14,7 @@ public class StatResponse {
         return _errorCode;
     }
 
-    public commons.StatResponse getStat() {
+    public commons.StatAttributes getStat() {
         return _sr;
     }            
     

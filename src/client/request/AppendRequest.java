@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
-import utils.Constants;
+import commons.Constants;
 
 public class AppendRequest{
 

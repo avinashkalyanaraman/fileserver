@@ -2,11 +2,11 @@ package server;
 
 import java.net.Socket;
 
+import commons.Constants;
 import commons.ErrorCode;
 import server.dir.DirHandler;
 import server.file.FileHandler;
 import server.response.DefaultResponse;
-import utils.Constants;
 import utils.PathType;
 
 public class Request {

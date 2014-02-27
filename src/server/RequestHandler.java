@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.net.Socket;
 
 import server.response.DefaultResponse;
-import utils.Constants;
 import utils.Conversions;
 import utils.PathType;
+import commons.Constants;
 import commons.ErrorCode;
 
 public class RequestHandler implements Runnable{

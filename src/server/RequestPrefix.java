@@ -1,6 +1,7 @@
 package server;
 
-import utils.Constants;
+import commons.Constants;
+
 import utils.PathType;
 
 public class RequestPrefix {
