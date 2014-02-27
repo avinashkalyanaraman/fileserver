@@ -4,11 +4,11 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import server.response.DefaultResponse;
+import utils.Constants;
 import utils.Conversions;
 import utils.PathType;
-
 import commons.ErrorCode;
-import commons.ResponseHandler;
 
 public class RequestHandler implements Runnable{
     private Socket socket;
@@ -31,7 +31,7 @@ public class RequestHandler implements Runnable{
             
             int bytes_read = bin.read(contents, 0, contents.length);
             if (bytes_read == -1) {
-                ResponseHandler.sendResponseCode(socket, 
+                DefaultResponse.send(socket, 
                         ErrorCode.NW_READ_ERROR_CODE);
                 return;
             }
@@ -39,7 +39,7 @@ public class RequestHandler implements Runnable{
             Request request = unmarshallStream(contents, bytes_read, bin);
             if (request == null) {
                 //XXX: Send error msg!
-                ResponseHandler.sendResponseCode(socket, 
+                DefaultResponse.send(socket, 
                         ErrorCode.INVALID_REQ_ERROR_CODE);
                 System.err.println("Bad request!");
                 return;

@@ -1,4 +1,4 @@
-package server;
+package utils;
 
 public class Constants {
     public static final int MAX_NUM_ARGS = 2;

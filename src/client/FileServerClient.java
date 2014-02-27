@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import server.Constants;
+import utils.Constants;
+import client.mapping.Mapper;
 import client.request.AppendRequest;
 import client.request.DefaultRequest;
 import client.request.ReadRequest;
@@ -20,7 +21,6 @@ import client.request.ReadResponse;
 import client.request.StatRequest;
 import client.request.StatResponse;
 import client.request.WriteRequest;
-import client.utils.Mapper;
 
 public class FileServerClient {
 

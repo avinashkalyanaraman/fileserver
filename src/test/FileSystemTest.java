@@ -1,6 +1,6 @@
 package test;
 
-import file.FileHandler;
+import server.file.FileHandler;
 
 public class FileSystemTest {
 

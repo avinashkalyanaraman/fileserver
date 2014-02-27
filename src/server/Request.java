@@ -3,10 +3,10 @@ package server;
 import java.net.Socket;
 
 import commons.ErrorCode;
-import commons.ResponseHandler;
-
-import dir.DirHandler;
-import file.FileHandler;
+import server.dir.DirHandler;
+import server.file.FileHandler;
+import server.response.DefaultResponse;
+import utils.Constants;
 import utils.PathType;
 
 public class Request {
@@ -91,7 +91,7 @@ public class Request {
 
     private void handleFileOp(Socket socket) {
         if (_cmd == null) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE);
         }
         
@@ -106,7 +106,7 @@ public class Request {
         } else if (_cmd.equalsIgnoreCase(Constants.FILE_DELETE_CMD)) {
             FileHandler.delete(_path, socket);
         } else {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE);
         }
     }
@@ -114,7 +114,7 @@ public class Request {
 
     private void handleDirOp(Socket socket) {
         if (_cmd == null) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE);
         }
         
@@ -125,7 +125,7 @@ public class Request {
         } else if (_cmd.equalsIgnoreCase(Constants.DIR_LISTLONG_CMD)) {
             DirHandler.listlong(_path, socket);
         } else {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE);
         }
         

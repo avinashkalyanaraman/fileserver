@@ -131,6 +131,5 @@ public class StatResponse implements Serializable{
 
         return sb.toString();
     }
-
     
 }

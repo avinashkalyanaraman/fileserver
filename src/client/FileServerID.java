@@ -1,6 +1,6 @@
 package client;
 
-import server.Constants;
+import utils.Constants;
 
 public class FileServerID {
 

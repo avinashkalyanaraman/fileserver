@@ -1,10 +1,10 @@
-package dir;
+package server.dir;
 
 import java.io.File;
 import java.net.Socket;
 
+import server.response.DefaultResponse;
 import commons.ErrorCode;
-import commons.ResponseHandler;
 import commons.StatHandler;
 
 public class DirHandler {
@@ -16,26 +16,26 @@ public class DirHandler {
      */
     public static int mkdir(String path, Socket socket) {
         if (path == null) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.BAD_PATH_CODE);
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File newDir = new File (path);        
         if (newDir.exists()) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.DIR_ALREADY_EXISTS_CODE);
             return ErrorCode.DIR_ALREADY_EXISTS_CODE;
         }
         
         if (newDir.mkdir()) {
             //success!
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.SUCCESS_CODE);
             return ErrorCode.SUCCESS_CODE;
         }
         
-        ResponseHandler.sendResponseCode(socket, 
+        DefaultResponse.send(socket, 
                 ErrorCode.MKDIR_FAIL_CODE);
         
         return ErrorCode.MKDIR_FAIL_CODE;
@@ -43,14 +43,14 @@ public class DirHandler {
     
     public static int list(String path, Socket socket) {
         if (path == null) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.BAD_PATH_CODE);
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File dir = new File(path);
         if (!dir.exists()) {
-            ResponseHandler.sendResponseCode(socket,
+            DefaultResponse.send(socket,
                     ErrorCode.FNF_CODE);
             return ErrorCode.FNF_CODE;
         }
@@ -65,14 +65,14 @@ public class DirHandler {
         
     public static int listlong(String path, Socket socket) {
         if (path == null) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.BAD_PATH_CODE);
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File dir = new File(path);
         if(!dir.exists()) {
-            ResponseHandler.sendResponseCode(socket,
+            DefaultResponse.send(socket,
                     ErrorCode.FNF_CODE);
             return ErrorCode.FNF_CODE;
         }
@@ -90,24 +90,24 @@ public class DirHandler {
     
     public static int remove(String path, Socket socket) {
         if (path == null) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.BAD_PATH_CODE);
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File dir = new File(path);
         if (!dir.exists()) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.FNF_CODE);
             return ErrorCode.FNF_CODE;
         }
         
         if(dir.delete()) {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.SUCCESS_CODE);
             return ErrorCode.SUCCESS_CODE;
         } else {
-            ResponseHandler.sendResponseCode(socket, 
+            DefaultResponse.send(socket, 
                     ErrorCode.DELETE_FAIL_CODE);
             return ErrorCode.DELETE_FAIL_CODE;
         }
