@@ -13,10 +13,11 @@ import java.util.List;
 import java.util.Random;
 
 import commons.Constants;
-
 import client.mapping.Mapper;
 import client.request.AppendRequest;
 import client.request.DefaultRequest;
+import client.request.DirListRequest;
+import client.request.DirListResponse;
 import client.request.ReadRequest;
 import client.request.ReadResponse;
 import client.request.StatRequest;
@@ -55,7 +56,7 @@ public class FileServerClient {
     }
 
 
-    //Returns 0 or 1 depending on whether write was successful or not!
+    //Returns 0 or non-0 depending on whether write was successful or not!
     public static int write(String path, byte[] wb, 
             long offset, byte[] nonce, int port) throws UnknownHostException, 
             IOException{                
@@ -85,7 +86,7 @@ public class FileServerClient {
         return retVal;
     }
 
-    //Returns 0 or 1 depending on whether append was successful or not!
+    //Returns 0 or non-0 depending on whether append was successful or not!
     public static int append(String path, byte[] wb, byte[] nonce, int port)
             throws UnknownHostException, IOException {
 
@@ -228,42 +229,19 @@ public class FileServerClient {
         return retVal;
     }
 
-    //XXX: Worry about return type
-    public static int list(String path, byte[] nonce, int port) 
-            throws UnknownHostException, IOException{
-        
-        if (path == null) {
-            throw new NullPointerException("delete path cannot be null");
-        }        
-        
-        Socket clientSocket = new Socket("localhost", port);
-        
-        try {
-            DefaultRequest.send(clientSocket,
-                    Constants.FILE_OPN_BYTE, Constants.FILE_DELETE_CMD_BYTE,
-                    path, nonce);
-        } catch(Exception e) {
-            clientSocket.close();
-            throw e;
-        }
-        
-        //read response!
-        return 0;
-    }
-
-    //XXX: Worry about return type
-    public static int listlong(String path, byte[] nonce, int port)
+    public static DirListResponse listlong(String path, 
+            byte[] nonce, int port)
             throws UnknownHostException, IOException {
         
         if (path == null) {
-            throw new NullPointerException("delete path cannot be null");
+            throw new NullPointerException("list path cannot be null");
         }        
         
         Socket clientSocket = new Socket("localhost", port);
         
         try {
-            DefaultRequest.send(clientSocket,
-                    Constants.FILE_OPN_BYTE, Constants.FILE_DELETE_CMD_BYTE,
+            DirListRequest.send(clientSocket,
+                    Constants.DIR_OPN_BYTE, Constants.DIR_LISTLONG_CMD_BYTE,
                     path, nonce);
         } catch(Exception e) {
             clientSocket.close();
@@ -271,7 +249,15 @@ public class FileServerClient {
         }
         
         //read response!
-        return 0;
+        DirListResponse dlr = null;
+        try {
+            dlr = DirListRequest.recv(clientSocket);
+        } catch (Exception e) {
+            clientSocket.close();
+            throw e;
+        }
+        
+        return dlr;
     }
 
     //Invoked to start the file server!

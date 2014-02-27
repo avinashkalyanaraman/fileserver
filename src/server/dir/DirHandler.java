@@ -1,11 +1,21 @@
 package server.dir;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 
-import server.file.FileHandler;
 import server.response.DefaultResponse;
+import server.response.DirListResponse;
+import utils.PathType;
+
+import commons.DirListing;
 import commons.ErrorCode;
+import commons.StatAttributes;
 
 public class DirHandler {
 
@@ -79,14 +89,68 @@ public class DirHandler {
         
         File[] files = dir.listFiles();
         
+        ArrayList<StatAttributes> stat_list = 
+                new ArrayList<StatAttributes>();
+        
         for(File file: files) {
-           FileHandler.stat(file.getAbsolutePath(),
-                   socket); 
+           try {
+               StatAttributes sa = getFileAttributes(
+                       file.getAbsolutePath());
+               if (sa != null) {
+                   //If we get no info for a file!
+                   //We discard and move on!
+                   stat_list.add(sa);
+               }
+           } catch(Exception e) {
+               //If we haven't managed to fetch for a file
+               //we continue fetching for the remaining files
+               // we don't throw error back to client!
+           }
         }
         
-        return 0;
+        DirListing dsa = new DirListing(stat_list);
+        DirListResponse.send(socket, dsa);        
+        
+        
+        return ErrorCode.SUCCESS_CODE;
     }
     
+    
+    private static StatAttributes getFileAttributes(String path) 
+        throws IOException{
+        
+        if (path == null) {
+            return null;
+        }
+        
+        Path file = Paths.get(path);
+        
+        BasicFileAttributes attr = null;
+        attr = Files.readAttributes(file, BasicFileAttributes.class);
+        
+        if (attr == null) {
+            //couldn't retrieve file attributes
+            return null;
+        }
+        
+        PathType type;
+        if (attr.isRegularFile()) {
+            type = PathType.FILE;
+        } else if(attr.isDirectory()) {
+            type = PathType.DIRECTORY;
+        } else if (attr.isSymbolicLink()) {
+            type = PathType.LINK;
+        } else {
+            type = PathType.OTHER;
+        }
+        
+        commons.StatAttributes attributes = new commons.StatAttributes(
+                file.getFileName().toString(),
+                attr.lastAccessTime(), attr.lastModifiedTime(),
+                attr.size(), type);
+        
+        return attributes;
+    }
     
     public static int remove(String path, Socket socket) {
         if (path == null) {

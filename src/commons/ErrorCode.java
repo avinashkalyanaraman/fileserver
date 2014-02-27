@@ -28,7 +28,7 @@ public class ErrorCode {
         case 0x04:
             return "Unable to delete file";
         case 0x05:
-            return "Unable to fetch attributes of the file";
+            return "Unable to fetch attributes";
         case 0x06:
             return "Unable to create directory";
         case 0x07:

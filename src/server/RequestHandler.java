@@ -45,7 +45,6 @@ public class RequestHandler implements Runnable{
                 return;
             } 
             
-            //XXX:just call the appropriate method next!
             request.handle(socket);
             
             return;            

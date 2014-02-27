@@ -3,10 +3,10 @@ package client.request;
 public class StatResponse {
 
     private int _errorCode;
-    private commons.StatAttributes _sr;
+    private commons.StatAttributes _sa;
     
-    public StatResponse(int errorCode, commons.StatAttributes sr) {
-        _sr = sr;
+    public StatResponse(int errorCode, commons.StatAttributes sa) {
+        _sa = sa;
         _errorCode = errorCode;
     }
 
@@ -15,7 +15,7 @@ public class StatResponse {
     }
 
     public commons.StatAttributes getStat() {
-        return _sr;
+        return _sa;
     }            
     
     public String toString() {
@@ -23,10 +23,10 @@ public class StatResponse {
             return null;
         }
         
-        if (_sr == null) {
+        if (_sa == null) {
             return null;
         } else {
-            return _sr.toString();
+            return _sa.toString();
         }
     }
 }

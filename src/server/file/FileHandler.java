@@ -146,7 +146,6 @@ public class FileHandler {
             return ErrorCode.BAD_PATH_CODE;
         }
         
-        //XXX: What do we want to send during stat on a file!
         Path file = Paths.get(path);
         
         BasicFileAttributes attr = null;
@@ -222,8 +221,8 @@ public class FileHandler {
                         ErrorCode.IO_ERROR_CODE);
                 return ErrorCode.IO_ERROR_CODE;
             }
-            //XXX: Send 0 byte valid  read-response!
             
+            //Send 0 byte valid  read-response!
             byte[] buf = new byte[0];
             ReadResponse.send(socket, buf);
             return ErrorCode.SUCCESS_CODE;
@@ -260,5 +259,5 @@ public class FileHandler {
         //send the b bytes out!
         ReadResponse.send(socket, b);
         return ErrorCode.SUCCESS_CODE;
-    }
+    }    
 }
