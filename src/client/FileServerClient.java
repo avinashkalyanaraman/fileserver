@@ -27,7 +27,8 @@ import client.request.WriteRequest;
 public class FileServerClient {
 
     public static ReadResponse read(String path, long offset, 
-            long numBytes, byte[] nonce, int port) throws UnknownHostException, IOException{
+            long numBytes, byte[] nonce, int port) 
+                    throws UnknownHostException, IOException{
 
         if (path == null) {
             throw new NullPointerException("Read path cannot be null");

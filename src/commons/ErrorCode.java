@@ -13,7 +13,8 @@ public class ErrorCode {
     public static final byte INVALID_CMD_CODE = 0x08;
     public static final byte NW_READ_ERROR_CODE = 0x09;
     public static final byte INVALID_REQ_ERROR_CODE = 0x0a;
-    
+    public static final byte LL_NOT_DIR_ERROR_CODE = 0x0b;
+    public static final byte LL_FAIL_ERROR_CODE = 0x0c;    
     
     public static String getErrorMsgFromErrorCode(byte code) {
         switch(code) {
@@ -39,6 +40,10 @@ public class ErrorCode {
             return "Network request read error by server";
         case 0x0a:
             return "Bad request";
+        case 0x0b:
+            return "Dir operation requested on file";
+        case 0x0c:
+            return "Unable to list files - possible ACL error";
         default:
             return "Unable to understand error code";
         }

@@ -16,12 +16,12 @@ public class FSClientTest {
         int port = fsid.getPort();
         byte[] nonce = fsid.getNonce();
         
-        String dir1 = "/Users/avinash/foo";
-        retVal = FileServerClient.mkdir(dir1, nonce, port);
+        String dir1 = "/Users/guest1/foo";
+//        retVal = FileServerClient.mkdir(dir1, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
 
-        
+        /*
         String dir2= dir1+ "/foo2";
         //creating a dir within foo
         FileServerClient.mkdir(dir2, nonce, port);
@@ -73,6 +73,7 @@ public class FSClientTest {
         
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
+        */
     }
 
 }

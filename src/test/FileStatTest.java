@@ -8,7 +8,7 @@ public class FileStatTest {
 
     public static void main(String[] args) throws Exception {
 
-        int port = 57302;
+        int port = 61158;
         String s_nonce = "123456781234567\n";
         byte[] nonce = s_nonce.getBytes();
         

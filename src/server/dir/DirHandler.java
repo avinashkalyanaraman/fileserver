@@ -87,7 +87,21 @@ public class DirHandler {
             return ErrorCode.FNF_CODE;
         }
         
+        if (!dir.isDirectory()) {
+            DefaultResponse.send(socket,
+                    ErrorCode.LL_NOT_DIR_ERROR_CODE);
+            return ErrorCode.LL_NOT_DIR_ERROR_CODE;
+        }
+        
         File[] files = dir.listFiles();
+        
+        //this can happen when there isn't permission to 
+        // list this dir!
+        if (files == null) {
+            DefaultResponse.send(socket,
+                    ErrorCode.LL_FAIL_ERROR_CODE);
+            return ErrorCode.LL_FAIL_ERROR_CODE;
+        }
         
         ArrayList<StatAttributes> stat_list = 
                 new ArrayList<StatAttributes>();
