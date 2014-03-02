@@ -29,12 +29,20 @@ public class DirListRequest {
         byte[] response_pfix = new byte[5];
         int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
         if (bytes_read != response_pfix.length) {
-            //Our error!
-            return new DirListResponse(-1, null);
+            //Error!
+            int errorCode = -1;
+            if (bytes_read == 1) {
+                errorCode = Conversions.getIntFromBytes( 
+                        (byte)0x00, (byte)0x00, (byte)0x00,
+                        response_pfix[0]);
+                //XXX: Check later for bad errorCode return!
+            }
+            return new DirListResponse(errorCode, null);
         }
         
-        int retVal = Conversions.getIntFromBytes(response_pfix[0], 
-                (byte)0x00, (byte)0x00, (byte)0x00);
+        int retVal = Conversions.getIntFromBytes( 
+                (byte)0x00, (byte)0x00, (byte)0x00,
+                response_pfix[0]);
         
         if (retVal != 0) {
             return new DirListResponse(retVal, null);

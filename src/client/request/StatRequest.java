@@ -27,12 +27,20 @@ public class StatRequest{
         byte[] response_pfix = new byte[5];
         int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
         if (bytes_read != response_pfix.length) {
-            //Our error!
-            return new StatResponse(-1, null);
+            //Error!
+            int errorCode = -1;
+            if (bytes_read == 1) {
+                errorCode = Conversions.getIntFromBytes( 
+                        (byte)0x00, (byte)0x00, (byte)0x00,
+                        response_pfix[0]);
+                //XXX: Check later if it's a valid error-code!
+            }
+            return new StatResponse(errorCode, null);
         }
         
-        int retVal = Conversions.getIntFromBytes(response_pfix[0], 
-                (byte)0x00, (byte)0x00, (byte)0x00);
+        int retVal = Conversions.getIntFromBytes( 
+                (byte)0x00, (byte)0x00, (byte)0x00,
+                response_pfix[0]);
         
         if (retVal != 0) {
             return new StatResponse(retVal, null);

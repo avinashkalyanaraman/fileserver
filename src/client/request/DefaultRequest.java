@@ -41,8 +41,9 @@ public class DefaultRequest {
             return -1;
         }
         
-        int retVal = Conversions.getIntFromBytes(response[0], 
-                (byte)0x00, (byte)0x00, (byte)0x00);
+        int retVal = Conversions.getIntFromBytes( 
+                (byte)0x00, (byte)0x00, 
+                (byte)0x00, response[0]);
         return retVal;
         
     }

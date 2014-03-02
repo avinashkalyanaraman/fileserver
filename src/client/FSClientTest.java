@@ -10,7 +10,7 @@ public class FSClientTest {
     public static void main(String[] args) throws Exception{
         
         int retVal;
-        DirListResponse dlr; 
+        DirListResponse dlr;
         
         FileServerID fsid = FileServerClient.start("fred");
         int port = fsid.getPort();
@@ -20,10 +20,11 @@ public class FSClientTest {
         retVal = FileServerClient.mkdir(dir1, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
-               
+
+        
         String dir2= dir1+ "/foo2";
         //creating a dir within foo
-        FileServerClient.mkdir(dir2, nonce, port);        
+        FileServerClient.mkdir(dir2, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
         

@@ -22,7 +22,7 @@ public class ErrorCode {
         case 0x01:
             return "Bad path - possibly null";
         case 0x02:
-            return "File Not Found";
+            return "File/Dir Not Found";
         case 0x03:
             return "An I/O Error Occurred during the operation";
         case 0x04:

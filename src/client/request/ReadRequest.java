@@ -61,12 +61,20 @@ public class ReadRequest extends DefaultRequest{
         byte[] response_pfix = new byte[5];
         int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
         if (bytes_read != response_pfix.length) {
-            //Our error!
-            return new ReadResponse(-1, null);
+            //Error!
+            int errorCode = -1;
+            if (bytes_read == 1) {
+                errorCode = Conversions.getIntFromBytes( 
+                        (byte)0x00, (byte)0x00, (byte)0x00,
+                        response_pfix[0]);
+                //XXX: Check later for bad errorCode return!
+            }
+            return new ReadResponse(errorCode, null);
         }
         
-        int retVal = Conversions.getIntFromBytes(response_pfix[0], 
-                (byte)0x00, (byte)0x00, (byte)0x00);
+        int retVal = Conversions.getIntFromBytes( 
+                (byte)0x00, (byte)0x00, (byte)0x00,
+                response_pfix[0]);
         
         if (retVal != 0) {
             return new ReadResponse(retVal, null);
