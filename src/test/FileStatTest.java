@@ -2,6 +2,7 @@ package test;
 
 
 import client.request.DirListResponse;
+import client.request.StatResponse;
 import client.FileServerClient;
 
 public class FileStatTest {
@@ -12,8 +13,9 @@ public class FileStatTest {
         String s_nonce = "123456781234567\n";
         byte[] nonce = s_nonce.getBytes();
         
-        String dir = "/Users/avinash/foo";
-        DirListResponse dlr = FileServerClient.listlong(dir, nonce, port);
+        String path = "/Users/guest1/foo/file1";
+        StatResponse sr = FileServerClient.stat(path, nonce, port);
+        System.out.println(sr);
     }
 
 }

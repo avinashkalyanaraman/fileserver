@@ -4,6 +4,8 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import commons.ErrorCode;
+
 public class DefaultResponse {
 
     /**
@@ -11,9 +13,21 @@ public class DefaultResponse {
      * @param socket
      * @param code
      */
-    public static void send(Socket socket, byte code) {
+    public static void send(Socket socket, byte code,
+            String errorMsg) {
         if (socket == null) {
             return;
+        }
+        
+        if (errorMsg == null && code != ErrorCode.SUCCESS_CODE) {
+            errorMsg = ErrorCode.getErrorMsgFromErrorCode(code);
+        }
+        
+        byte[] msgBytes;
+        if (errorMsg != null) {
+            msgBytes = errorMsg.getBytes();
+        } else {
+            msgBytes = new byte[0];
         }
         
         try {

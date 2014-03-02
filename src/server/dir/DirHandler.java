@@ -27,26 +27,33 @@ public class DirHandler {
     public static int mkdir(String path, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File newDir = new File (path);        
         if (newDir.exists()) {
             DefaultResponse.send(socket, 
-                    ErrorCode.DIR_ALREADY_EXISTS_CODE);
+                    ErrorCode.DIR_ALREADY_EXISTS_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.DIR_ALREADY_EXISTS_CODE));
             return ErrorCode.DIR_ALREADY_EXISTS_CODE;
         }
         
         if (newDir.mkdir()) {
             //success!
             DefaultResponse.send(socket, 
-                    ErrorCode.SUCCESS_CODE);
+                    ErrorCode.SUCCESS_CODE,
+                    null);
             return ErrorCode.SUCCESS_CODE;
         }
         
         DefaultResponse.send(socket, 
-                ErrorCode.MKDIR_FAIL_CODE);
+                ErrorCode.MKDIR_FAIL_CODE,
+                ErrorCode.getErrorMsgFromErrorCode(
+                        ErrorCode.MKDIR_FAIL_CODE));
         
         return ErrorCode.MKDIR_FAIL_CODE;
     }
@@ -54,14 +61,18 @@ public class DirHandler {
     public static int list(String path, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File dir = new File(path);
         if (!dir.exists()) {
             DefaultResponse.send(socket,
-                    ErrorCode.FNF_CODE);
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
@@ -76,20 +87,26 @@ public class DirHandler {
     public static int listlong(String path, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File dir = new File(path);
         if(!dir.exists()) {
-            DefaultResponse.send(socket,
-                    ErrorCode.FNF_CODE);
+            DefaultResponse.send(socket, 
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
         if (!dir.isDirectory()) {
             DefaultResponse.send(socket,
-                    ErrorCode.LL_NOT_DIR_ERROR_CODE);
+                    ErrorCode.LL_NOT_DIR_ERROR_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.LL_NOT_DIR_ERROR_CODE));
             return ErrorCode.LL_NOT_DIR_ERROR_CODE;
         }
         
@@ -99,7 +116,9 @@ public class DirHandler {
         // list this dir!
         if (files == null) {
             DefaultResponse.send(socket,
-                    ErrorCode.LL_FAIL_ERROR_CODE);
+                    ErrorCode.LL_FAIL_ERROR_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.LL_FAIL_ERROR_CODE));
             return ErrorCode.LL_FAIL_ERROR_CODE;
         }
         
@@ -124,7 +143,6 @@ public class DirHandler {
         
         DirListing dsa = new DirListing(stat_list);
         DirListResponse.send(socket, dsa);        
-        
         
         return ErrorCode.SUCCESS_CODE;
     }
@@ -169,24 +187,31 @@ public class DirHandler {
     public static int remove(String path, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File dir = new File(path);
         if (!dir.exists()) {
             DefaultResponse.send(socket, 
-                    ErrorCode.FNF_CODE);
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
         if(dir.delete()) {
             DefaultResponse.send(socket, 
-                    ErrorCode.SUCCESS_CODE);
+                    ErrorCode.SUCCESS_CODE
+                    ,null);
             return ErrorCode.SUCCESS_CODE;
         } else {
             DefaultResponse.send(socket, 
-                    ErrorCode.DELETE_FAIL_CODE);
+                    ErrorCode.DELETE_FAIL_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.DELETE_FAIL_CODE));
             return ErrorCode.DELETE_FAIL_CODE;
         }
     }

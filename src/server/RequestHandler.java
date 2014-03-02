@@ -32,7 +32,9 @@ public class RequestHandler implements Runnable{
             int bytes_read = bin.read(contents, 0, contents.length);
             if (bytes_read == -1) {
                 DefaultResponse.send(socket, 
-                        ErrorCode.NW_READ_ERROR_CODE);
+                        ErrorCode.NW_READ_ERROR_CODE,
+                        ErrorCode.getErrorMsgFromErrorCode(
+                                ErrorCode.NW_READ_ERROR_CODE));
                 return;
             }
             
@@ -40,7 +42,9 @@ public class RequestHandler implements Runnable{
             if (request == null) {
                 //XXX: Send error msg!
                 DefaultResponse.send(socket, 
-                        ErrorCode.INVALID_REQ_ERROR_CODE);
+                        ErrorCode.INVALID_REQ_ERROR_CODE,
+                        ErrorCode.getErrorMsgFromErrorCode(
+                                ErrorCode.INVALID_REQ_ERROR_CODE));
                 System.err.println("Bad request!");
                 return;
             } 

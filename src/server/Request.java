@@ -92,7 +92,9 @@ public class Request {
     private void handleFileOp(Socket socket) {
         if (_cmd == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.INVALID_CMD_CODE);
+                    ErrorCode.INVALID_CMD_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.INVALID_CMD_CODE));
         }
         
         if(_cmd.equalsIgnoreCase(Constants.FILE_READ_CMD)) {
@@ -107,7 +109,9 @@ public class Request {
             FileHandler.delete(_path, socket);
         } else {
             DefaultResponse.send(socket, 
-                    ErrorCode.INVALID_CMD_CODE);
+                    ErrorCode.INVALID_CMD_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.INVALID_CMD_CODE));
         }
     }
 
@@ -115,7 +119,9 @@ public class Request {
     private void handleDirOp(Socket socket) {
         if (_cmd == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.INVALID_CMD_CODE);
+                    ErrorCode.INVALID_CMD_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.INVALID_CMD_CODE));
         }
         
         if (_cmd.equalsIgnoreCase(Constants.DIR_CREATE_CMD)) {
@@ -126,7 +132,9 @@ public class Request {
             DirHandler.listlong(_path, socket);
         } else {
             DefaultResponse.send(socket, 
-                    ErrorCode.INVALID_CMD_CODE);
+                    ErrorCode.INVALID_CMD_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.INVALID_CMD_CODE));
         }
         
     }

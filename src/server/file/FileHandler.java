@@ -22,24 +22,31 @@ public class FileHandler {
         
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
         File file = new File(path);
         if (!file.exists()) {
             DefaultResponse.send(socket,
-                    ErrorCode.FNF_CODE);
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
         if(file.delete()) {
             DefaultResponse.send(socket, 
-                    ErrorCode.SUCCESS_CODE);
+                    ErrorCode.SUCCESS_CODE,
+                    null);
             return ErrorCode.SUCCESS_CODE;
         } else {
             DefaultResponse.send(socket, 
-                    ErrorCode.DELETE_FAIL_CODE);
+                    ErrorCode.DELETE_FAIL_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.DELETE_FAIL_CODE));
             return ErrorCode.DELETE_FAIL_CODE;
         }
     }
@@ -49,7 +56,9 @@ public class FileHandler {
         
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
         }
         
         RandomAccessFile raf;
@@ -59,7 +68,9 @@ public class FileHandler {
         } catch (FileNotFoundException e) {
             //Write file doesn't exist!
             DefaultResponse.send(socket, 
-                    ErrorCode.FNF_CODE);
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
@@ -71,20 +82,23 @@ public class FileHandler {
         } catch (IOException e) {
             //couldn't perform the seek/write!
             DefaultResponse.send(socket, 
-                    ErrorCode.IO_ERROR_CODE);
+                    ErrorCode.IO_ERROR_CODE,
+                    e.toString());
             return ErrorCode.IO_ERROR_CODE;
         } finally {
             try {
                 raf.close();
                 if (!failed) {
                     DefaultResponse.send(socket, 
-                            ErrorCode.SUCCESS_CODE);
+                            ErrorCode.SUCCESS_CODE,
+                            null);
                     return ErrorCode.SUCCESS_CODE;
                 }
             } catch (IOException e) {
                 //Couldn't close file handle!
                 DefaultResponse.send(socket, 
-                        ErrorCode.IO_ERROR_CODE);
+                        ErrorCode.IO_ERROR_CODE,
+                        e.toString());
                 return ErrorCode.IO_ERROR_CODE;
             }
         }
@@ -94,7 +108,9 @@ public class FileHandler {
             Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
@@ -105,7 +121,9 @@ public class FileHandler {
         } catch (FileNotFoundException e) {
             //Write file doesn't exist!
             DefaultResponse.send(socket, 
-                    ErrorCode.FNF_CODE);
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
@@ -118,21 +136,24 @@ public class FileHandler {
         } catch (IOException e) {
             //couldn't perform the seek/write!
             DefaultResponse.send(socket, 
-                    ErrorCode.IO_ERROR_CODE);
+                    ErrorCode.IO_ERROR_CODE,
+                    e.toString());
             return ErrorCode.IO_ERROR_CODE;
         } finally {
             try {
                 raf.close();
                 if (!failed) {
                     DefaultResponse.send(socket, 
-                            ErrorCode.SUCCESS_CODE);
+                            ErrorCode.SUCCESS_CODE,
+                            null);
                     return ErrorCode.SUCCESS_CODE;
                 }
                 
             } catch (IOException e) {
                 //Couldn't close file handle!
                 DefaultResponse.send(socket, 
-                        ErrorCode.IO_ERROR_CODE);
+                        ErrorCode.IO_ERROR_CODE,
+                        e.toString());
                 return ErrorCode.IO_ERROR_CODE;
             }
         }
@@ -142,7 +163,9 @@ public class FileHandler {
     public static int stat(String path, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
@@ -153,15 +176,19 @@ public class FileHandler {
             attr = Files.readAttributes(file, BasicFileAttributes.class);
         } catch (IOException e) {
             // couldn't retrieve file attributes
+            
             DefaultResponse.send(socket,
-                    ErrorCode.IO_ERROR_CODE);
+                    ErrorCode.IO_ERROR_CODE,
+                    e.toString());
             return ErrorCode.IO_ERROR_CODE;
         }
         
         if (attr == null) {
             //couldn't retrieve file attributes
             DefaultResponse.send(socket,
-                    ErrorCode.ATTR_FETCH_FAIL_CODE);
+                    ErrorCode.ATTR_FETCH_FAIL_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.ATTR_FETCH_FAIL_CODE));
             return ErrorCode.ATTR_FETCH_FAIL_CODE;
         }
         
@@ -192,7 +219,9 @@ public class FileHandler {
             long numBytes, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
-                    ErrorCode.BAD_PATH_CODE);
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
             return ErrorCode.BAD_PATH_CODE;
         }
         
@@ -202,7 +231,9 @@ public class FileHandler {
             raf = new RandomAccessFile(file, "r");
         } catch (FileNotFoundException e) {
             DefaultResponse.send(socket, 
-                    ErrorCode.FNF_CODE);
+                    ErrorCode.FNF_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FNF_CODE));
             return ErrorCode.FNF_CODE;
         }
         
@@ -218,7 +249,8 @@ public class FileHandler {
             } catch (IOException e) {
                 //Unable to close raf
                 DefaultResponse.send(socket, 
-                        ErrorCode.IO_ERROR_CODE);
+                        ErrorCode.IO_ERROR_CODE,
+                        e.toString());
                 return ErrorCode.IO_ERROR_CODE;
             }
             
@@ -240,7 +272,8 @@ public class FileHandler {
         } catch (IOException ioe) {
             //Couldn't seek/read!
             DefaultResponse.send(socket, 
-                    ErrorCode.IO_ERROR_CODE);
+                    ErrorCode.IO_ERROR_CODE,
+                    ioe.toString());
             return ErrorCode.IO_ERROR_CODE;
         } finally {
             try {
@@ -248,13 +281,11 @@ public class FileHandler {
             } catch (IOException e) {
                 // Unable to close file
                 DefaultResponse.send(socket, 
-                        ErrorCode.IO_ERROR_CODE);
+                        ErrorCode.IO_ERROR_CODE,
+                        e.toString());
                 return ErrorCode.IO_ERROR_CODE;
             }
         }
-
-        String s = new String(b);
-        System.out.println(s);
         
         //send the b bytes out!
         ReadResponse.send(socket, b);
