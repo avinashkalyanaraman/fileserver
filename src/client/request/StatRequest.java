@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import commons.Constants;
 import utils.Conversions;
 
 public class StatRequest{
@@ -26,27 +27,25 @@ public class StatRequest{
         //status code + sizeof(read buffer)
         byte[] response_pfix = new byte[5];
         int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
-        if (bytes_read != response_pfix.length) {
-            //Error!
-            int errorCode = -1;
-            if (bytes_read == 1) {
-                errorCode = Conversions.getIntFromBytes( 
-                        (byte)0x00, (byte)0x00, (byte)0x00,
-                        response_pfix[0]);
-                //XXX: Check later if it's a valid error-code!
+        if (bytes_read != response_pfix.length ) {
+            if (bytes_read == 0) {
+                return new StatResponse(-1, Constants.NO_RESPONSE_MSG);
             }
-            return new StatResponse(errorCode, null);
+            return new StatResponse(-1, Constants.SMALL_RESPONSE_ERROR);
+        }
+
+        //Error!
+        int errorCode = Conversions.getIntFromBytes( 
+                    (byte)0x00, (byte)0x00, (byte)0x00,
+                    response_pfix[0]);
+
+        boolean successResponse = true;
+        if (errorCode != 0) {
+            successResponse = false; 
         }
         
-        int retVal = Conversions.getIntFromBytes( 
-                (byte)0x00, (byte)0x00, (byte)0x00,
-                response_pfix[0]);
-        
-        if (retVal != 0) {
-            return new StatResponse(retVal, null);
-        }
-        
-        //success response!
+        //contents can be:
+        // success response or error msg as indicated by above boolean!
         int read_buf_size = Conversions.getIntFromBytes(response_pfix[1], 
                 response_pfix[2], response_pfix[3], response_pfix[4]);
        
@@ -58,21 +57,27 @@ public class StatRequest{
             
             //I 've read how much I am supposed to read
             if (readOffset == read_buf_size) {
-                commons.StatAttributes sr = commons.StatAttributes.deserialize(
-                        read_buff);
-                return new StatResponse(0, sr);
+                if(successResponse) {
+                    commons.StatAttributes sr = commons.StatAttributes.deserialize(
+                            read_buff);
+                    return new StatResponse(0, sr);
+                } else {
+                    return new StatResponse(errorCode, 
+                            new String(read_buff));
+                }
             }
             
             bytes_read = bis.read(contents, 0, contents.length);
             if (bytes_read == -1) {
-                //XXX: Server could 've sent a smaller response!
-                return new StatResponse(-1, null);
+                return new StatResponse(-1, 
+                        Constants.SMALL_RESPONSE_ERROR);
             }
             
             //Server sending response larger than it should -
             // shouldn't happen actually!
             if (readOffset + bytes_read > read_buf_size) {
-                return new StatResponse(-1, null);
+                return new StatResponse(-1, 
+                        Constants.LARGE_RESPONSE_ERROR);
             }
             
             System.arraycopy(contents, 0, read_buff, 

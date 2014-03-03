@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import commons.Constants;
 import commons.DirListing;
-
 import utils.Conversions;
 
 public class DirListRequest {
@@ -28,27 +28,26 @@ public class DirListRequest {
         //status code + sizeof(read buffer)
         byte[] response_pfix = new byte[5];
         int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
-        if (bytes_read != response_pfix.length) {
-            //Error!
-            int errorCode = -1;
-            if (bytes_read == 1) {
-                errorCode = Conversions.getIntFromBytes( 
-                        (byte)0x00, (byte)0x00, (byte)0x00,
-                        response_pfix[0]);
-                //XXX: Check later for bad errorCode return!
+        
+        if (bytes_read != response_pfix.length ) {
+            if (bytes_read == 0) {
+                return new DirListResponse(-1, Constants.NO_RESPONSE_MSG);
             }
-            return new DirListResponse(errorCode, null);
+            return new DirListResponse(-1, Constants.SMALL_RESPONSE_ERROR);
         }
-        
-        int retVal = Conversions.getIntFromBytes( 
-                (byte)0x00, (byte)0x00, (byte)0x00,
-                response_pfix[0]);
-        
-        if (retVal != 0) {
-            return new DirListResponse(retVal, null);
+
+        //Error!
+        int errorCode = Conversions.getIntFromBytes( 
+                    (byte)0x00, (byte)0x00, (byte)0x00,
+                    response_pfix[0]);
+
+        boolean successResponse = true;
+        if (errorCode != 0) {
+            successResponse = false; 
         }
-        
-        //success response!
+                
+        //contents can be:
+        // success response or error msg as indicated by above boolean!
         int read_buf_size = Conversions.getIntFromBytes(response_pfix[1], 
                 response_pfix[2], response_pfix[3], response_pfix[4]);
        
@@ -60,20 +59,26 @@ public class DirListRequest {
             
             //I 've read how much I am supposed to read
             if (readOffset == read_buf_size) {
-                DirListing dl = DirListing.deserialize(read_buff);
-                return new DirListResponse(0, dl);
+                if (successResponse) {
+                    DirListing dl = DirListing.deserialize(read_buff);
+                    return new DirListResponse(0, dl);
+                } else {
+                    return new DirListResponse(errorCode,
+                            new String(read_buff));
+                }
             }
             
             bytes_read = bis.read(contents, 0, contents.length);
             if (bytes_read == -1) {
-                //XXX: Server could 've sent a smaller response!
-                return new DirListResponse(-1, null);
+                    return new DirListResponse(-1,
+                            Constants.SMALL_RESPONSE_ERROR);
             }
             
             //Server sending response larger than it should -
             // shouldn't happen actually!
             if (readOffset + bytes_read > read_buf_size) {
-                return new DirListResponse(-1, null);
+                return new DirListResponse(-1,
+                        Constants.LARGE_RESPONSE_ERROR);
             }
             
             System.arraycopy(contents, 0, read_buff, 

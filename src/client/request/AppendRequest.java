@@ -40,7 +40,7 @@ public class AppendRequest{
         bos.flush();
     }
     
-    public static int recv(Socket clientSocket) throws IOException{
+    public static DefaultResponse recv(Socket clientSocket) throws IOException{
         return DefaultRequest.recv(clientSocket);
     }
 }

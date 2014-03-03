@@ -1,5 +1,6 @@
 package client;
 
+import client.request.DefaultResponse;
 import client.request.DirListResponse;
 import client.request.ReadResponse;
 import client.request.StatResponse;
@@ -9,33 +10,27 @@ public class FSClientTest {
 
     public static void main(String[] args) throws Exception{
         
-        int retVal;
+        DefaultResponse retVal;
         DirListResponse dlr;
         
         FileServerID fsid = FileServerClient.start("fred");
         int port = fsid.getPort();
         byte[] nonce = fsid.getNonce();
         
-        String dir1 = "/Users/guest1/";
-        /*retVal = FileServerClient.mkdir(dir1, nonce, port);
+        String dir1 = "/Users/avinash/foo";
+        retVal = FileServerClient.mkdir(dir1, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
 
-        retVal = FileServerClient.rmdir(dir1, nonce, port);
-        
         String dir2= dir1+ "/foo2";
         //creating a dir within foo
         FileServerClient.mkdir(dir2, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
-        */
+
         //creating file within foo
         String text = "My name is ak3ka";
         String filepath = dir1 + "/file1";
-        
-        //stating file1
-        StatResponse sr = FileServerClient.stat(filepath, nonce, port);
-        System.out.println(sr);
         
         FileServerClient.write(filepath, 
                 text.getBytes(), 0, nonce, port);
@@ -49,7 +44,7 @@ public class FSClientTest {
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
         
-        /*
+        
         //reading contents of the file
         ReadResponse rr = FileServerClient.read(filepath, 0, 200, nonce, port);
         String contents = new String(rr.getReadBuf());
@@ -80,7 +75,7 @@ public class FSClientTest {
         
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
-        */
+        
     }
 
 }

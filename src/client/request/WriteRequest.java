@@ -51,7 +51,7 @@ public class WriteRequest{
     }
 
     
-    public static int recv(Socket clientSocket) throws IOException{
+    public static DefaultResponse recv(Socket clientSocket) throws IOException{
         return DefaultRequest.recv(clientSocket);
     }
     

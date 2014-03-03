@@ -3,6 +3,7 @@ package server.response;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 import commons.ErrorCode;
 
@@ -34,10 +35,19 @@ public class DefaultResponse {
             BufferedOutputStream bos = new BufferedOutputStream(
                     socket.getOutputStream());
             
-            byte[] buf = new byte[1];
-            buf[0] = code;
+            //1 for status code + 4 for length of msg if any
+            byte[] response = new byte[5];
             
-            bos.write(buf);
+            response[0] = code;
+            
+            ByteBuffer bb_buflen = ByteBuffer.allocate(4);
+            //the initial order of a byte buffer is always BIG_ENDIAN.        
+            bb_buflen.putInt(msgBytes.length);
+            byte[] b_buflen = bb_buflen.array();
+            System.arraycopy(b_buflen, 0, response, 1, b_buflen.length);
+            
+            bos.write(response);
+            bos.write(msgBytes);
             bos.close();
         } catch (IOException e) {
             System.err.println("Error writing out to client");

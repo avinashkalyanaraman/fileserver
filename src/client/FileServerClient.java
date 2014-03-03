@@ -16,6 +16,7 @@ import commons.Constants;
 import client.mapping.Mapper;
 import client.request.AppendRequest;
 import client.request.DefaultRequest;
+import client.request.DefaultResponse;
 import client.request.DirListRequest;
 import client.request.DirListResponse;
 import client.request.ReadRequest;
@@ -56,9 +57,7 @@ public class FileServerClient {
         return rr;
     }
 
-
-    //Returns 0 or non-0 depending on whether write was successful or not!
-    public static int write(String path, byte[] wb, 
+    public static DefaultResponse write(String path, byte[] wb, 
             long offset, byte[] nonce, int port) throws UnknownHostException, 
             IOException{                
 
@@ -77,18 +76,18 @@ public class FileServerClient {
         }
         
         //read response
-        int retVal = -1;
         try {
-            retVal = WriteRequest.recv(clientSocket);
+            DefaultResponse retVal = WriteRequest.recv(
+                    clientSocket);
+            return retVal;
         } catch(IOException ioe) {
             clientSocket.close();
             throw ioe;
         }
-        return retVal;
     }
 
-    //Returns 0 or non-0 depending on whether append was successful or not!
-    public static int append(String path, byte[] wb, byte[] nonce, int port)
+    public static DefaultResponse append(String path,
+            byte[] wb, byte[] nonce, int port)
             throws UnknownHostException, IOException {
 
         if (path == null) {
@@ -104,14 +103,13 @@ public class FileServerClient {
         }
         
         //read response
-        int retVal = -1;
         try {
-            retVal = AppendRequest.recv(clientSocket);
+            DefaultResponse retVal = AppendRequest.recv(clientSocket);
+            return retVal;
         } catch(IOException ioe) {
             clientSocket.close();
             throw ioe;
         }
-        return retVal;
     }
 
     public static StatResponse stat(String path, byte[] nonce, int port) 
@@ -143,7 +141,7 @@ public class FileServerClient {
         return sr;
     }
 
-    public static int rm(String path, byte[] nonce, int port) 
+    public static DefaultResponse rm(String path, byte[] nonce, int port) 
             throws UnknownHostException, IOException {
         
         if (path == null) {
@@ -163,18 +161,18 @@ public class FileServerClient {
         
         
         //read response
-        int retVal = -1;
         try {
-            retVal = DefaultRequest.recv(clientSocket);
+            DefaultResponse retVal = DefaultRequest.recv(clientSocket);
+            return retVal;
         } catch(IOException ioe) {
             clientSocket.close();
             throw ioe;
         }
-        return retVal;        
         
     }
 
-    public static int mkdir (String path, byte[] nonce, int port) 
+    public static DefaultResponse mkdir (String path, 
+            byte[] nonce, int port) 
             throws UnknownHostException, IOException {
         
         if (path == null) {
@@ -192,17 +190,18 @@ public class FileServerClient {
         }
        
         //read response
-        int retVal = -1;
         try {
-            retVal = DefaultRequest.recv(clientSocket);
+            DefaultResponse retVal = DefaultRequest.recv(
+                    clientSocket);
+            return retVal;
+            
         } catch(IOException ioe) {
             clientSocket.close();
             throw ioe;
         }
-        return retVal;
     }
 
-    public static int rmdir(String path, byte[] nonce, int port) 
+    public static DefaultResponse rmdir(String path, byte[] nonce, int port) 
             throws UnknownHostException, IOException {
         
         if (path == null) {
@@ -220,14 +219,14 @@ public class FileServerClient {
         }
         
         //read response
-        int retVal = -1;
         try {
-            retVal = DefaultRequest.recv(clientSocket);
+            DefaultResponse retVal = DefaultRequest.recv(
+                    clientSocket);
+            return retVal;
         } catch(IOException ioe) {
             clientSocket.close();
             throw ioe;
         }
-        return retVal;
     }
 
     public static DirListResponse listlong(String path, 

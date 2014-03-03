@@ -8,7 +8,6 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 import commons.Constants;
-
 import utils.Conversions;
 
 public class ReadRequest extends DefaultRequest{
@@ -60,34 +59,31 @@ public class ReadRequest extends DefaultRequest{
         //status code + sizeof(read buffer)
         byte[] response_pfix = new byte[5];
         int bytes_read = bis.read(response_pfix, 0, response_pfix.length);
-        if (bytes_read != response_pfix.length) {
-            //Error!
-            int errorCode = -1;
-            if (bytes_read == 1) {
-                errorCode = Conversions.getIntFromBytes( 
-                        (byte)0x00, (byte)0x00, (byte)0x00,
-                        response_pfix[0]);
-                //XXX: Check later for bad errorCode return!
+        if (bytes_read != response_pfix.length ) {
+            if (bytes_read == 0) {
+                return new ReadResponse(-1, Constants.NO_RESPONSE_MSG);
             }
-            return new ReadResponse(errorCode, null);
+            return new ReadResponse(-1, Constants.SMALL_RESPONSE_ERROR);
+        }
+
+        //Error!
+        int errorCode = Conversions.getIntFromBytes( 
+                    (byte)0x00, (byte)0x00, (byte)0x00,
+                    response_pfix[0]);
+
+        boolean successResponse = true;
+        if (errorCode != 0) {
+            successResponse = false; 
         }
         
-        int retVal = Conversions.getIntFromBytes( 
-                (byte)0x00, (byte)0x00, (byte)0x00,
-                response_pfix[0]);
-        
-        if (retVal != 0) {
-            return new ReadResponse(retVal, null);
-        }
-        
-        //success response!
         int read_buf_size = Conversions.getIntFromBytes(response_pfix[1], 
                 response_pfix[2], response_pfix[3], response_pfix[4]);
         
         if (read_buf_size > resp_size) {
             //err! we have a smaller buff to recv
             // than what the server is sending
-            return new ReadResponse(-1, null);
+            return new ReadResponse(-1, "Server is sending a larger response "
+                    + "than it should");
         }
 
         byte[] contents = new byte[512* 1024];
@@ -96,19 +92,31 @@ public class ReadRequest extends DefaultRequest{
         int readOffset = 0;
         while(true) {
             if (readOffset == read_buf_size) {
-                return new ReadResponse(0, read_buff);
+                if (successResponse) {
+                    return new ReadResponse(0, read_buff);
+                } else {
+                   return new ReadResponse(errorCode,
+                           new String(read_buff)); 
+                }
             }
             
             bytes_read = bis.read(contents, 0, contents.length);
             if (bytes_read == -1) {
-                //XXX: Server could 've sent a smaller response!
-                return new ReadResponse(0, read_buff);
+                if (successResponse) {
+                    //XXX: Server could 've sent a smaller response!
+                    return new ReadResponse(0, read_buff);
+                } else {
+                    return new ReadResponse(-1, 
+                            Constants.SMALL_RESPONSE_ERROR);
+                }
+                
             }
             
             //Server sending response larger than it should -
             // shouldn't happen actually!
             if (readOffset + bytes_read > read_buf_size) {
-                return new ReadResponse(-1, null);
+                return new ReadResponse(-1, 
+                        Constants.LARGE_RESPONSE_ERROR);
             }
             
             System.arraycopy(contents, 0, read_buff, 
@@ -116,7 +124,6 @@ public class ReadRequest extends DefaultRequest{
             readOffset += bytes_read;
 
         }
-                
         
     }
 }

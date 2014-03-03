@@ -33,4 +33,10 @@ public class Constants {
     public static int READ_ARGS_SIZE = 16; //2 LONGS
     public static int WRITE_ARGS_SIZE = 8; //1 LONG
     
+    public static final String NO_RESPONSE_MSG = "No error msg from server";
+    public static final String LARGE_RESPONSE_ERROR = "Server sending an error msg"
+            + " which is larger than what it said it would send";    
+    public static final String SMALL_RESPONSE_ERROR = "Server sent contents"
+            + " which is smaller in size than what it said it would send";
+
 }
