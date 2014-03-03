@@ -67,10 +67,10 @@ public class FileHandler {
             raf = new RandomAccessFile(path, "rw");
         } catch (FileNotFoundException e) {
             //Write file doesn't exist!
+            System.out.println(e.toString());
             DefaultResponse.send(socket, 
                     ErrorCode.FNF_CODE,
-                    ErrorCode.getErrorMsgFromErrorCode(
-                            ErrorCode.FNF_CODE));
+                    e.toString());
             return ErrorCode.FNF_CODE;
         }
         
@@ -122,8 +122,7 @@ public class FileHandler {
             //Write file doesn't exist!
             DefaultResponse.send(socket, 
                     ErrorCode.FNF_CODE,
-                    ErrorCode.getErrorMsgFromErrorCode(
-                            ErrorCode.FNF_CODE));
+                    e.toString());
             return ErrorCode.FNF_CODE;
         }
         

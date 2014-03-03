@@ -17,14 +17,14 @@ public class FSClientTest {
         int port = fsid.getPort();
         byte[] nonce = fsid.getNonce();
         
-        String dir1 = "/Users/avinash/foo";
+        String dir1 = "/Users/guest1/foo";
         retVal = FileServerClient.mkdir(dir1, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
 
         String dir2= dir1+ "/foo2";
         //creating a dir within foo
-        FileServerClient.mkdir(dir2, nonce, port);
+        retVal = FileServerClient.mkdir(dir2, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
 
@@ -32,18 +32,17 @@ public class FSClientTest {
         String text = "My name is ak3ka";
         String filepath = dir1 + "/file1";
         
-        FileServerClient.write(filepath, 
+        retVal = FileServerClient.write(filepath, 
                 text.getBytes(), 0, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
         
         //appending to that file
         String append_text = " in uva";
-        FileServerClient.append(filepath, append_text.getBytes(), 
+        retVal = FileServerClient.append(filepath, append_text.getBytes(), 
                 nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
-        
         
         //reading contents of the file
         ReadResponse rr = FileServerClient.read(filepath, 0, 200, nonce, port);
@@ -58,19 +57,19 @@ public class FSClientTest {
         dlr.disp();
         
         //removing the file
-        FileServerClient.rm(filepath, nonce, port);
+        retVal = FileServerClient.rm(filepath, nonce, port);
         
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
         
         //removing subdir within foo
-        FileServerClient.rmdir(dir2, nonce, port);
+        retVal = FileServerClient.rmdir(dir2, nonce, port);
         
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
 
         //removing directory foo
-        FileServerClient.rmdir(dir1, nonce, port);
+        retVal = FileServerClient.rmdir(dir1, nonce, port);
         //FileServerClient.listlong(dir1, nonce, port);
         
         dlr = FileServerClient.listlong(dir1, nonce, port);
