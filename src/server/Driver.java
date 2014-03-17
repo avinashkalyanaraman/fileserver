@@ -49,6 +49,11 @@ public class Driver {
                 //wait for request
                 Socket connxn = socket.accept();
                 
+                //Only localhost requests are entertained!
+                if (!connxn.getInetAddress().isLoopbackAddress()) {
+                    continue;
+                }
+                
                 RequestHandler reqHandler = new RequestHandler(connxn,
                         nonce);
                 Thread t = new Thread(reqHandler);
