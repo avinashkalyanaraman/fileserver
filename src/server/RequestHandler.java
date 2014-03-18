@@ -40,7 +40,6 @@ public class RequestHandler implements Runnable{
             
             Request request = unmarshallStream(contents, bytes_read, bin);
             if (request == null) {
-                //XXX: Send error msg!
                 DefaultResponse.send(socket, 
                         ErrorCode.INVALID_REQ_ERROR_CODE,
                         ErrorCode.getErrorMsgFromErrorCode(

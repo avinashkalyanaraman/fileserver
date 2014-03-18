@@ -69,8 +69,6 @@ public class Driver {
         BufferedOutputStream bos = new BufferedOutputStream(System.out);
         s = s+ "\n";
         byte [] b = s.getBytes();
-//        FileHandler.append("/Users/avinash/Documents/eclipse_workspaces"
-//                + "/workspace_fileserver/FileServer/bin/foo.log", b, null);
         bos.write(b);
         bos.flush();
         

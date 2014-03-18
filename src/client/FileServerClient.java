@@ -269,7 +269,16 @@ public class FileServerClient {
         
         //Has someone else already created a mapping?
         if (fsid != null) {
-            return fsid;
+            boolean isChildAlive = false;
+            try {
+                fsid.getFSProcess().exitValue();
+            } catch (IllegalThreadStateException itse) {
+                //Exception is thrown if process is still running!
+                isChildAlive = true;
+            }
+            if (isChildAlive) {
+                return fsid;
+            }
         }
         
         List<String> cmd = new ArrayList<String>();
@@ -319,7 +328,7 @@ public class FileServerClient {
             return null;
         }
         
-        fsid = new FileServerID(nonce, port);
+        fsid = new FileServerID(nonce, port, p);
         Mapper.setClientMapping(uname, fsid);
         return fsid;
     }
