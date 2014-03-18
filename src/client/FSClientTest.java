@@ -13,7 +13,7 @@ public class FSClientTest {
         DefaultResponse retVal;
         DirListResponse dlr;
         
-        FileServerID fsid = FileServerClient.start("fred");
+        FileServerID fsid = FileServerClient.start("guest1");
         int port = fsid.getPort();
         byte[] nonce = fsid.getNonce();
         

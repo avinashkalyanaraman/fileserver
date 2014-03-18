@@ -285,7 +285,6 @@ public class FileServerClient {
         cmd.add("sudo");
         cmd.add("-u");
         cmd.add(uname);
-        cmd.add("sh");
         cmd.add(Constants.FILE_SERVER_ROOT_PATH + "fs_wrapper.sh");
         cmd.add(Constants.FILE_SERVER_ROOT_PATH);
         
