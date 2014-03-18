@@ -38,5 +38,8 @@ public class Constants {
             + " which is larger than what it said it would send";    
     public static final String SMALL_RESPONSE_ERROR = "Server sent contents"
             + " which is smaller in size than what it said it would send";
+    
+    //XXX: Later take this as an argument
+    public static final String FILE_SERVER_ROOT_PATH = "/private/tmp/fileserver/";
 
 }
