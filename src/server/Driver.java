@@ -43,6 +43,11 @@ public class Driver {
         System.out.println(socket.getLocalPort());
         //write(socket.getLocalPort());
         
+        //start the monitoring thread!
+        Monitor monitor = new Monitor(System.currentTimeMillis());
+        Thread monitor_thread = new Thread(monitor);
+        monitor_thread.start();
+        
         //Starting select-accept loop!
         while (true) {
             try {
@@ -52,6 +57,8 @@ public class Driver {
                 //Only localhost requests are entertained!
                 if (!connxn.getInetAddress().isLoopbackAddress()) {
                     continue;
+                } else {
+                    Monitor.setLastReqTime(System.currentTimeMillis());
                 }
                 
                 RequestHandler reqHandler = new RequestHandler(connxn,
