@@ -104,8 +104,8 @@ public class FileHandler {
         }
     }
     
-    public static int append(String path, byte[] buf,
-            Socket socket) {
+    public static int truncAppend(String path, byte[] buf,
+            long offset, Socket socket) {
         if (path == null) {
             DefaultResponse.send(socket, 
                     ErrorCode.BAD_PATH_CODE,
@@ -127,7 +127,7 @@ public class FileHandler {
         }
         
         try {
-            raf.seek(raf.length());
+            raf.seek(offset);
             raf.write(buf);
             failed = false;
             

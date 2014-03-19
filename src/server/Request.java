@@ -101,8 +101,8 @@ public class Request {
             FileHandler.read(_path, _args[0], _args[1], socket);
         } else if (_cmd.equalsIgnoreCase(Constants.FILE_WRITE_CMD)) {
             FileHandler.write(_path, _writeBuf, _args[0], socket);
-        } else if (_cmd.equalsIgnoreCase(Constants.FILE_APPEND_CMD)) {
-            FileHandler.append(_path, _writeBuf, socket);
+        } else if (_cmd.equalsIgnoreCase(Constants.FILE_TRUNCAPPEND_CMD)) {
+            FileHandler.truncAppend(_path, _writeBuf, _args[0], socket);
         } else if (_cmd.equalsIgnoreCase(Constants.FILE_STAT_CMD)) {
             FileHandler.stat(_path, socket);
         } else if (_cmd.equalsIgnoreCase(Constants.FILE_DELETE_CMD)) {

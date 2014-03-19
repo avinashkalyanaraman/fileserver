@@ -8,21 +8,30 @@ import java.nio.ByteBuffer;
 
 import commons.Constants;
 
-public class AppendRequest{
+public class TruncAppendRequest{
 
     public static void send(Socket clientSocket, String path, byte[] wb,
-            byte[] nonce) throws UnknownHostException, IOException {
+            long offset, byte[] nonce) 
+            throws UnknownHostException, IOException {
         
-        BufferedOutputStream bos = new BufferedOutputStream(
+        BufferedOutputStream bos = null;
+
+        bos = new BufferedOutputStream(
                 clientSocket.getOutputStream());
 
-
-        //1K buffer containing request!
         byte[] request = new byte[1024 + wb.length];
         int w_offset = 0;
 
         w_offset = Commons.formPrefix(request, Constants.FILE_OPN_BYTE,
-                Constants.FILE_APPEND_CMD_BYTE, path, nonce);
+                Constants.FILE_TRUNCAPPEND_CMD_BYTE, path, nonce);
+
+        //filling args!
+        ByteBuffer bb_arg1= ByteBuffer.allocate(8);
+        long arg1 = offset;
+        bb_arg1.putLong(arg1);
+        byte[] b_arg1 = bb_arg1.array();
+        System.arraycopy(b_arg1, 0, request, w_offset, b_arg1.length);
+        w_offset += b_arg1.length;
 
         //filling buflen
         int wb_size = wb.length;
@@ -35,12 +44,15 @@ public class AppendRequest{
         //writebuffer
         System.arraycopy(wb, 0, request, w_offset, wb.length);
         w_offset += wb.length;
-
-        bos.write(request, 0, w_offset);            
+        
+        bos.write(request, 0, w_offset);
         bos.flush();
+        
     }
+
     
     public static DefaultResponse recv(Socket clientSocket) throws IOException{
         return DefaultRequest.recv(clientSocket);
     }
+    
 }

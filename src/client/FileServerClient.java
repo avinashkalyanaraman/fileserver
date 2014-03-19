@@ -14,7 +14,7 @@ import java.util.Random;
 
 import commons.Constants;
 import client.mapping.Mapper;
-import client.request.AppendRequest;
+import client.request.TruncAppendRequest;
 import client.request.DefaultRequest;
 import client.request.DefaultResponse;
 import client.request.DirListRequest;
@@ -86,8 +86,8 @@ public class FileServerClient {
         }
     }
 
-    public static DefaultResponse append(String path,
-            byte[] wb, byte[] nonce, int port)
+    public static DefaultResponse truncAppend(String path,
+            byte[] wb, long offset, byte[] nonce, int port)
             throws UnknownHostException, IOException {
 
         if (path == null) {
@@ -96,7 +96,7 @@ public class FileServerClient {
 
         Socket clientSocket = new Socket("localhost", port);
         try {
-            AppendRequest.send(clientSocket, path, wb, nonce);
+            TruncAppendRequest.send(clientSocket, path, wb, offset, nonce);
         } catch (Exception e) {
             clientSocket.close();
             throw e;
@@ -104,7 +104,7 @@ public class FileServerClient {
         
         //read response
         try {
-            DefaultResponse retVal = AppendRequest.recv(clientSocket);
+            DefaultResponse retVal = TruncAppendRequest.recv(clientSocket);
             return retVal;
         } catch(IOException ioe) {
             clientSocket.close();

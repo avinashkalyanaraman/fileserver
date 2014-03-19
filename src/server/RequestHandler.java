@@ -96,7 +96,8 @@ public class RequestHandler implements Runnable{
         long[] args = new long[Constants.MAX_NUM_ARGS];
         boolean success = parseArgs(contents, 
                 offset, resp_size, prefix.isReadReq(),
-                prefix.isWriteReq(), args);
+                prefix.isWriteReq() || prefix.isAppendReq(),
+                args);
         
         //we don't have args to satisfy request!
         if (!success) {
@@ -105,7 +106,7 @@ public class RequestHandler implements Runnable{
         
         if (prefix.isReadReq()) {
             offset += Constants.READ_ARGS_SIZE; //2 longs
-        } else if (prefix.isWriteReq()) {
+        } else if (prefix.isWriteReq() || prefix.isAppendReq()) {
             offset += Constants.WRITE_ARGS_SIZE; //1 long
         }
         
@@ -264,8 +265,8 @@ public class RequestHandler implements Runnable{
                case Constants.FILE_WRITE_CMD_BYTE:
                    cmd = Constants.FILE_WRITE_CMD;
                    break;
-               case Constants.FILE_APPEND_CMD_BYTE:
-                   cmd = Constants.FILE_APPEND_CMD;
+               case Constants.FILE_TRUNCAPPEND_CMD_BYTE:
+                   cmd = Constants.FILE_TRUNCAPPEND_CMD;
                    break;
                case Constants.FILE_STAT_CMD_BYTE:
                    cmd = Constants.FILE_STAT_CMD;

@@ -13,11 +13,11 @@ public class FSClientTest {
         DefaultResponse retVal;
         DirListResponse dlr;
         
-        FileServerID fsid = FileServerClient.start("guest1");
+        FileServerID fsid = FileServerClient.start("avinash");
         int port = fsid.getPort();
         byte[] nonce = fsid.getNonce();
         
-        String dir1 = "/Users/guest1/foo";
+        String dir1 = "/Users/avinash/foo";
         retVal = FileServerClient.mkdir(dir1, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
@@ -39,8 +39,8 @@ public class FSClientTest {
         
         //appending to that file
         String append_text = " in uva";
-        retVal = FileServerClient.append(filepath, append_text.getBytes(), 
-                nonce, port);
+        retVal = FileServerClient.truncAppend(filepath, append_text.getBytes(), 
+                1,nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
         

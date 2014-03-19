@@ -56,6 +56,6 @@ public class RequestPrefix {
     }
     
     public boolean isAppendReq() {
-        return (_cmd.equals(Constants.FILE_APPEND_CMD));
+        return (_cmd.equals(Constants.FILE_TRUNCAPPEND_CMD));
     }
 }

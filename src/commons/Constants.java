@@ -6,7 +6,7 @@ public class Constants {
     
     public static String FILE_READ_CMD = "r";
     public static String FILE_WRITE_CMD = "w";
-    public static String FILE_APPEND_CMD = "a";
+    public static String FILE_TRUNCAPPEND_CMD = "a";
     public static String FILE_STAT_CMD = "s";
     public static String FILE_DELETE_CMD = "d";
     
@@ -17,7 +17,7 @@ public class Constants {
     
     public final static byte FILE_READ_CMD_BYTE = 0x00;
     public final static byte FILE_WRITE_CMD_BYTE = 0x01;
-    public final static byte FILE_APPEND_CMD_BYTE = 0x02;
+    public final static byte FILE_TRUNCAPPEND_CMD_BYTE = 0x02;
     public final static byte FILE_STAT_CMD_BYTE = 0x04;
     public final static byte FILE_DELETE_CMD_BYTE = 0x08;
     
