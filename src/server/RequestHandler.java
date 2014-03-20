@@ -277,6 +277,11 @@ public class RequestHandler implements Runnable{
                case Constants.FILE_CREATE_CMD_BYTE:
                    cmd = Constants.FILE_CREAT_CMD;
                    break;
+               case Constants.FILE_CAN_READ_CMD_BYTE:
+                   cmd = Constants.FILE_CAN_READ_CMD;
+                   break;
+               case Constants.FILE_CAN_WRITE_CMD_BYTE:
+                   cmd = Constants.FILE_CAN_WRITE_CMD;
            }
        } else if (pathType == PathType.DIRECTORY) {
            switch(cmd_type) {
@@ -289,6 +294,12 @@ public class RequestHandler implements Runnable{
                case Constants.DIR_LISTLONG_CMD_BYTE:
                    cmd = Constants.DIR_LISTLONG_CMD;
                    break;
+               case Constants.DIR_CAN_READ_CMD_BYTE:
+                   cmd = Constants.DIR_CAN_READ_CMD;
+               case Constants.DIR_CAN_WRITE_CMD_BYTE:
+                   cmd = Constants.DIR_CAN_WRITE_CMD;
+               case Constants.DIR_ISDIR_CMD_BYTE:
+                   cmd = Constants.DIR_ISDIR_CMD;
            }
        }
        if (cmd == null) {

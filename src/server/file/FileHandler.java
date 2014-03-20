@@ -14,6 +14,7 @@ import server.response.DefaultResponse;
 import server.response.ReadResponse;
 import utils.PathType;
 import commons.ErrorCode;
+import commons.FSActions;
 import server.response.StatResponse;
 
 public class FileHandler {
@@ -336,5 +337,16 @@ public class FileHandler {
             return ErrorCode.CREATE_FAIL_CODE;
         }
         
-    }    
+    }
+    
+    //returns 0 if readable!
+    public static int canRead(String path, Socket socket) {
+        return FSActions.canRead(path, socket);
+    }
+    
+    //returns 0 if writeable!
+    public static int canWrite(String path, Socket socket) {
+        return FSActions.canWrite(path, socket);
+    }
+    
 }

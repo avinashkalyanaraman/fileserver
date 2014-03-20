@@ -109,7 +109,12 @@ public class Request {
             FileHandler.delete(_path, socket);
         } else if (_cmd.equalsIgnoreCase(Constants.FILE_CREAT_CMD)) {
             FileHandler.createNewFile(_path, socket);
-        } else {
+        } else if (_cmd.equalsIgnoreCase(Constants.FILE_CAN_READ_CMD)) {
+            FileHandler.canRead(_path, socket);
+        } else if (_cmd.equalsIgnoreCase(Constants.FILE_CAN_WRITE_CMD)) {
+            FileHandler.canWrite(_path, socket);
+        }
+        else {
             DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE,
                     ErrorCode.getErrorMsgFromErrorCode(
@@ -132,6 +137,12 @@ public class Request {
             DirHandler.remove(_path, socket);
         } else if (_cmd.equalsIgnoreCase(Constants.DIR_LISTLONG_CMD)) {
             DirHandler.listlong(_path, socket);
+        } else if (_cmd.equalsIgnoreCase(Constants.DIR_CAN_READ_CMD)) {
+            DirHandler.canRead(_path, socket);
+        } else if (_cmd.equalsIgnoreCase(Constants.DIR_CAN_WRITE_CMD)) {
+            DirHandler.canWrite(_path, socket);
+        } else if (_cmd.equalsIgnoreCase(Constants.DIR_ISDIR_CMD)) {
+            DirHandler.isDir(_path, socket);
         } else {
             DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE,

@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import server.response.DefaultResponse;
 import server.response.DirListResponse;
 import utils.PathType;
-
 import commons.DirListing;
 import commons.ErrorCode;
+import commons.FSActions;
 import commons.StatAttributes;
 
 public class DirHandler {
@@ -213,6 +213,39 @@ public class DirHandler {
                     ErrorCode.getErrorMsgFromErrorCode(
                             ErrorCode.DELETE_FAIL_CODE));
             return ErrorCode.DELETE_FAIL_CODE;
+        }
+    }
+    
+    //returns 0 if readable!
+    public static int canRead(String path, Socket socket) {
+        return FSActions.canRead(path, socket);
+    }
+    
+    //returns 0 if writeable!
+    public static int canWrite(String path, Socket socket) {
+        return FSActions.canWrite(path, socket);
+    }
+    
+    public static int isDir(String path, Socket socket) {
+        if (path == null) {
+            DefaultResponse.send(socket, 
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
+            return ErrorCode.BAD_PATH_CODE;
+        }
+        
+        File f = new File(path);
+        if (f.isDirectory()) {
+            DefaultResponse.send(socket, 
+                    ErrorCode.SUCCESS_CODE,
+                    null);
+            return ErrorCode.SUCCESS_CODE;
+        } else {
+            DefaultResponse.send(socket, 
+                    ErrorCode.NOT_DIR_CODE,
+                    null);
+            return ErrorCode.NOT_DIR_CODE;
         }
     }
 }

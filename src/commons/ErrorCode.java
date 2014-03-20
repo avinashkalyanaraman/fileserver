@@ -16,7 +16,10 @@ public class ErrorCode {
     public static final byte LL_NOT_DIR_ERROR_CODE = 0x0b;
     public static final byte LL_FAIL_ERROR_CODE = 0x0c;
     public static final byte FILE_ALREADY_EXISTS_CODE = 0x0d;
-    public static final byte CREATE_FAIL_CODE = 0x0e;    
+    public static final byte CREATE_FAIL_CODE = 0x0e;
+    public static final byte CANNOT_READ_CODE = 0x0f;
+    public static final byte CANNOT_WRITE_CODE = 0x10;
+    public static final byte NOT_DIR_CODE = 0x11;
     
     public static String getErrorMsgFromErrorCode(byte code) {
         switch(code) {
@@ -50,6 +53,12 @@ public class ErrorCode {
             return "The file already exists";
         case 0x0e:
             return "Unable to create file";
+        case 0x0f:
+            return "Cannot read file/dir";
+        case 0x10:
+            return "No write permission for file/dir";
+        case 0x11:
+            return "The given file system path isn't a directory";
         default:
             return "Unable to understand error code";
         }
