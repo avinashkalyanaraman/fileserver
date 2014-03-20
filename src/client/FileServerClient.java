@@ -2,7 +2,6 @@ package client;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
@@ -213,6 +212,34 @@ public class FileServerClient {
         try {
             DefaultRequest.send(clientSocket,
                     Constants.DIR_OPN_BYTE, Constants.DIR_DELETE_CMD_BYTE,
+                    path, nonce);
+        } catch(Exception e) {
+            clientSocket.close();
+            throw e;
+        }
+        
+        //read response
+        try {
+            DefaultResponse retVal = DefaultRequest.recv(
+                    clientSocket);
+            return retVal;
+        } catch(IOException ioe) {
+            clientSocket.close();
+            throw ioe;
+        }
+    }
+    
+    public static DefaultResponse isDir(String path, byte[] nonce, int port) 
+            throws UnknownHostException, IOException {
+        
+        if (path == null) {
+            throw new NullPointerException("path cannot be null");
+        }        
+        
+        Socket clientSocket = new Socket("localhost", port);
+        try {
+            DefaultRequest.send(clientSocket,
+                    Constants.DIR_OPN_BYTE, Constants.DIR_ISDIR_CMD_BYTE,
                     path, nonce);
         } catch(Exception e) {
             clientSocket.close();
