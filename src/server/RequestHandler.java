@@ -282,6 +282,9 @@ public class RequestHandler implements Runnable{
                    break;
                case Constants.FILE_CAN_WRITE_CMD_BYTE:
                    cmd = Constants.FILE_CAN_WRITE_CMD;
+                   break;
+               case Constants.FILE_DOESEXIST_CMD_BYTE:
+                   cmd = Constants.FILE_DOESEXIST_CMD;
            }
        } else if (pathType == PathType.DIRECTORY) {
            switch(cmd_type) {
@@ -302,6 +305,9 @@ public class RequestHandler implements Runnable{
                    break;
                case Constants.DIR_ISDIR_CMD_BYTE:
                    cmd = Constants.DIR_ISDIR_CMD;
+                   break;
+               case Constants.DIR_DOESEXIST_CMD_BYTE:
+                   cmd = Constants.DIR_DOESEXIST_CMD;
            }
        }
        if (cmd == null) {

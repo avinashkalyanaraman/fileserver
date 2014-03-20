@@ -290,7 +290,7 @@ public class FileServerClient {
             throws UnknownHostException, IOException {
         
         if (path == null) {
-            throw new NullPointerException("Can Read path cannot be null");
+            throw new NullPointerException("path cannot be null");
         } 
         
         Socket clientSocket = new Socket("localhost", port);
@@ -326,12 +326,53 @@ public class FileServerClient {
         
     }
     
+    public static DefaultResponse exists(String path,
+            byte[] nonce, int port, PathType pt) 
+                    throws UnknownHostException, IOException{
+        
+        if (path == null) {
+            throw new NullPointerException("path cannot be null");
+        }
+        
+        Socket clientSocket = new Socket("localhost", port);
+        try {
+            if (pt == PathType.FILE) {
+                DefaultRequest.send(clientSocket,
+                        Constants.FILE_OPN_BYTE, Constants.FILE_DOESEXIST_CMD_BYTE,
+                        path, nonce);
+            } else if (pt == PathType.DIRECTORY) {
+                DefaultRequest.send(clientSocket,
+                        Constants.DIR_OPN_BYTE, Constants.DIR_DOESEXIST_CMD_BYTE,
+                        path, nonce);
+            } else {
+                clientSocket.close();
+                throw new IOException ("Cannot check existance on "
+                        + "non file/dir");
+            }
+            
+        } catch(Exception e) {
+            clientSocket.close();
+            throw e;
+        }
+        
+        //read response
+        try {
+            DefaultResponse retVal = DefaultRequest.recv(
+                    clientSocket);
+            return retVal;
+        } catch(IOException ioe) {
+            clientSocket.close();
+            throw ioe;
+        }
+        
+    }
+    
     public static DefaultResponse canWrite(String path,
             byte[] nonce, int port, PathType pt) 
             throws UnknownHostException, IOException {
         
         if (path == null) {
-            throw new NullPointerException("Can Write path cannot be null");
+            throw new NullPointerException(" path cannot be null");
         } 
         
         Socket clientSocket = new Socket("localhost", port);

@@ -248,4 +248,8 @@ public class DirHandler {
             return ErrorCode.NOT_DIR_CODE;
         }
     }
+    
+    public static int isExists(String path, Socket socket) {
+        return FSActions.isExists(path, socket);
+    }
 }

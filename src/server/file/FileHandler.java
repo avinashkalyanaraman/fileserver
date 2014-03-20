@@ -349,4 +349,7 @@ public class FileHandler {
         return FSActions.canWrite(path, socket);
     }
     
+    public static int isExists(String path, Socket socket) {
+        return FSActions.isExists(path, socket);
+    }
 }

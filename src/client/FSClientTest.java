@@ -38,6 +38,8 @@ public class FSClientTest {
         retVal = FileServerClient.canWrite("/Users/guest1/foo", nonce, port, PathType.DIRECTORY);
         retVal = FileServerClient.canWrite("/Users/guest1/file1", nonce, port, PathType.FILE);
 
+        retVal = FileServerClient.exists(dir1, nonce, port, PathType.DIRECTORY);
+        retVal = FileServerClient.exists(dir1+"asdas", nonce, port, PathType.DIRECTORY);
         
         //creating file within foo
         String text = "My name is ak3ka";
@@ -46,6 +48,9 @@ public class FSClientTest {
         if (retVal.getErrorCode() != 0) {
             System.err.println("Unable to create file!!!");
         }
+        
+        retVal = FileServerClient.exists(filepath, nonce, port, PathType.FILE);
+        retVal = FileServerClient.exists(filepath + "asd", nonce, port, PathType.FILE);
         
         //check if dir
         retVal = FileServerClient.isDir(filepath, nonce, port);
