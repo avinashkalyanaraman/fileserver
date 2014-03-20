@@ -31,6 +31,10 @@ public class FSClientTest {
         //creating file within foo
         String text = "My name is ak3ka";
         String filepath = dir1 + "/file1";
+        retVal = FileServerClient.creat(filepath, nonce, port);
+        if (retVal.getErrorCode() != 0) {
+            System.err.println("Unable to create file!!!");
+        }
         
         retVal = FileServerClient.write(filepath, 
                 text.getBytes(), 0, nonce, port);

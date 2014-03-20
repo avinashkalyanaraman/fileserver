@@ -107,6 +107,8 @@ public class Request {
             FileHandler.stat(_path, socket);
         } else if (_cmd.equalsIgnoreCase(Constants.FILE_DELETE_CMD)) {
             FileHandler.delete(_path, socket);
+        } else if (_cmd.equalsIgnoreCase(Constants.FILE_CREAT_CMD)) {
+            FileHandler.createNewFile(_path, socket);
         } else {
             DefaultResponse.send(socket, 
                     ErrorCode.INVALID_CMD_CODE,

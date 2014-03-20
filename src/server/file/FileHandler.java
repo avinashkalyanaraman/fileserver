@@ -289,5 +289,52 @@ public class FileHandler {
         //send the b bytes out!
         ReadResponse.send(socket, b);
         return ErrorCode.SUCCESS_CODE;
+    }
+
+    public static int createNewFile(String path,
+            Socket socket) {
+
+        if (path == null) {
+            DefaultResponse.send(socket, 
+                    ErrorCode.BAD_PATH_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.BAD_PATH_CODE));
+            return ErrorCode.BAD_PATH_CODE;
+        }
+        
+        File f = new File (path);        
+        if (f.exists()) {
+            DefaultResponse.send(socket, 
+                    ErrorCode.FILE_ALREADY_EXISTS_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.FILE_ALREADY_EXISTS_CODE));
+            return ErrorCode.FILE_ALREADY_EXISTS_CODE;
+        }
+        
+        boolean retVal;
+        try {
+            retVal = f.createNewFile();
+        } catch (IOException e) {
+            DefaultResponse.send(socket, 
+                    ErrorCode.IO_ERROR_CODE,
+                    e.toString());
+            return ErrorCode.IO_ERROR_CODE;
+        }
+        
+        if(retVal) {
+            //success
+            DefaultResponse.send(socket, 
+                    ErrorCode.SUCCESS_CODE,
+                    null);
+            return ErrorCode.SUCCESS_CODE;
+        } else {
+            DefaultResponse.send(socket, 
+                    ErrorCode.CREATE_FAIL_CODE,
+                    ErrorCode.getErrorMsgFromErrorCode(
+                            ErrorCode.CREATE_FAIL_CODE));
+            
+            return ErrorCode.CREATE_FAIL_CODE;
+        }
+        
     }    
 }

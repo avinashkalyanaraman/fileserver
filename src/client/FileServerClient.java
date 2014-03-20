@@ -229,6 +229,34 @@ public class FileServerClient {
         }
     }
 
+    public static DefaultResponse creat(String path, byte[] nonce, int port) 
+            throws UnknownHostException, IOException {
+        
+        if (path == null) {
+            throw new NullPointerException("Rmdir path cannot be null");
+        }        
+        
+        Socket clientSocket = new Socket("localhost", port);
+        try {
+            DefaultRequest.send(clientSocket,
+                    Constants.FILE_OPN_BYTE, Constants.FILE_CREATE_CMD_BYTE,
+                    path, nonce);
+        } catch(Exception e) {
+            clientSocket.close();
+            throw e;
+        }
+        
+        //read response
+        try {
+            DefaultResponse retVal = DefaultRequest.recv(
+                    clientSocket);
+            return retVal;
+        } catch(IOException ioe) {
+            clientSocket.close();
+            throw ioe;
+        }
+    }
+    
     public static DirListResponse listlong(String path, 
             byte[] nonce, int port)
             throws UnknownHostException, IOException {

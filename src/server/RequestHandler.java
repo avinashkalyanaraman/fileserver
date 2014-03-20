@@ -273,7 +273,10 @@ public class RequestHandler implements Runnable{
                    break;
                case Constants.FILE_DELETE_CMD_BYTE:
                    cmd = Constants.FILE_DELETE_CMD;
-                   break;                    
+                   break;
+               case Constants.FILE_CREATE_CMD_BYTE:
+                   cmd = Constants.FILE_CREAT_CMD;
+                   break;
            }
        } else if (pathType == PathType.DIRECTORY) {
            switch(cmd_type) {
