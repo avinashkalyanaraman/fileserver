@@ -1,6 +1,7 @@
 package test;
 
 
+import utils.PathType;
 import client.request.DefaultResponse;
 import client.request.DirListResponse;
 import client.request.StatResponse;
@@ -10,7 +11,7 @@ public class FileStatTest {
 
     public static void main(String[] args) throws Exception {
 
-        int port = 52892;
+        int port = 57594;
         String s_nonce = "123456781234567\n";
         byte[] nonce = s_nonce.getBytes();
         
@@ -25,9 +26,10 @@ public class FileStatTest {
                 nonce, port);
         System.out.println(dr.getErrorCode());
         */
-        DefaultResponse dr = FileServerClient.creat(filepath, nonce, port);
-        System.out.println(dr.getErrorCode());
         
+        DefaultResponse dr =
+                FileServerClient.canWrite("/Users/guest1/foo/", nonce, port, PathType.DIRECTORY);
+        System.out.println(dr.getErrorCode());
     }
 
 }

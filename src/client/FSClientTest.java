@@ -1,5 +1,6 @@
 package client;
 
+import utils.PathType;
 import client.request.DefaultResponse;
 import client.request.DirListResponse;
 import client.request.ReadResponse;
@@ -27,7 +28,17 @@ public class FSClientTest {
         retVal = FileServerClient.mkdir(dir2, nonce, port);
         dlr = FileServerClient.listlong(dir1, nonce, port);
         dlr.disp();
+        
+        //check if dir
+        retVal = FileServerClient.isDir(dir2, nonce, port);
+        
+        retVal = FileServerClient.canRead(dir1, nonce, port, PathType.DIRECTORY);
+        retVal = FileServerClient.canRead("/Users/guest1/foo", nonce, port, PathType.DIRECTORY);
+        retVal = FileServerClient.canRead("/Users/guest1/file1", nonce, port, PathType.FILE);
+        retVal = FileServerClient.canWrite("/Users/guest1/foo", nonce, port, PathType.DIRECTORY);
+        retVal = FileServerClient.canWrite("/Users/guest1/file1", nonce, port, PathType.FILE);
 
+        
         //creating file within foo
         String text = "My name is ak3ka";
         String filepath = dir1 + "/file1";
@@ -35,6 +46,9 @@ public class FSClientTest {
         if (retVal.getErrorCode() != 0) {
             System.err.println("Unable to create file!!!");
         }
+        
+        //check if dir
+        retVal = FileServerClient.isDir(filepath, nonce, port);
         
         retVal = FileServerClient.write(filepath, 
                 text.getBytes(), 0, nonce, port);

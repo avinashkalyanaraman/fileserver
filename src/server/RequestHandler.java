@@ -296,8 +296,10 @@ public class RequestHandler implements Runnable{
                    break;
                case Constants.DIR_CAN_READ_CMD_BYTE:
                    cmd = Constants.DIR_CAN_READ_CMD;
+                   break;
                case Constants.DIR_CAN_WRITE_CMD_BYTE:
                    cmd = Constants.DIR_CAN_WRITE_CMD;
+                   break;
                case Constants.DIR_ISDIR_CMD_BYTE:
                    cmd = Constants.DIR_ISDIR_CMD;
            }
